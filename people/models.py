@@ -14,7 +14,7 @@ class Person(models.Model):
         (ENSEMBLE, 'Ensemble'),
     )
 
-    first_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100, blank=True, null=True,)
     last_name = models.CharField(max_length=100)
     display_name = models.CharField(
         max_length=200,
@@ -36,11 +36,19 @@ class Person(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.display_name or f"{self.first_name} {self.last_name}"
+        if self.display_name:
+            return self.display_name
+        return " ".join(p for p in [self.first_name, self.last_name] if p)
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+
+        if not self.last_name:
+            raise ValidationError("All persons must have a name in the last_name field.")
 
 
-class ConcertRoleType(models.Model):
-    """Concert role types, e.g. conductor, soloist, etc."""
+class PersonRoleType(models.Model):
+    """Role types, e.g. conductor, soloist, composer, arranger, etc."""
     code = models.CharField(
         max_length=50,
         unique=True,
@@ -54,6 +62,15 @@ class ConcertRoleType(models.Model):
         default=True,
         help_text='Soft-disable role types without breaking history')
 
+    class Meta:
+        ordering = ['name']
+
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        if self.pk:
+            original = PersonRoleType.objects.get(pk=self.pk)
+            if original.code != self.code:
+                raise ValueError("PersonRoleType.code is immutable")
+        super().save(*args, **kwargs)

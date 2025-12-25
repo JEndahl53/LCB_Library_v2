@@ -42,7 +42,10 @@ INSTALLED_APPS = [
     # local
     'people.apps.PeopleConfig',
     'accounts.apps.AccountsConfig',
+    'venues',
+    'music',
     'concerts',
+    'migration_tools',
 ]
 
 MIDDLEWARE = [

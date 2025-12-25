@@ -3,6 +3,10 @@ from . import models
 
 # Register your models here.
 
-admin.site.register(models.Person)
-admin.site.register(models.ConcertRoleType)
-# admin.site.register(models.ConcertRole)
+
+@admin.register(models.Person)
+class PersonAdmin(admin.ModelAdmin):
+    search_fields = ['first_name', 'last_name', 'display_name']
+
+
+admin.site.register(models.PersonRoleType)

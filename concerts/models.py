@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.urls import reverse
+from venues.models import Venue
 
 # Create your models here.
 
@@ -10,14 +11,13 @@ class Concert(models.Model):
     title = models.CharField(max_length=200)
     date = models.DateTimeField(blank=True, null=True)
 
-    # todo enable venue once we have the venue table back in place.
-    # venue = models.ForeignKey(
-    #     'venues.Venue',
-    #     on_delete=models.SET_NULL,
-    #     blank=True,
-    #     null=True,
-    #     related_name='concerts',
-    # )
+    venue = models.ForeignKey(
+        'venues.Venue',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='concerts',
+    )
 
     poster = models.ImageField(upload_to='posters/', blank=True)
     description = models.TextField(blank=True)
@@ -46,12 +46,12 @@ class ConcertRole(models.Model):
     )
 
     role_type = models.ForeignKey(
-        "people.ConcertRoleType",
+        "people.PersonRoleType",
         on_delete=models.PROTECT,
         related_name='concert_roles',
     )
 
-    display_order = models.IntegerField(default=0)
+    display_order = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['display_order']
