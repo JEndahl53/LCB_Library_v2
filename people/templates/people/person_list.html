@@ -1,0 +1,72 @@
+<!-- people/templates/people/person_list.html -->
+
+{% extends 'base.html' %}
+{% load people_extras %}
+
+{% block title %}People{% endblock %}
+
+{% block content %}
+<h1>People</h1>
+
+<form method="get">
+  <fieldset>
+    <legend>Filters</legend>
+
+    <!-- live search for name, via HTMX (no Alpine) -->
+    <input
+      type="search"
+      name="q"
+      placeholder="Search people..."
+      value="{{ request.GET.q|default:'' }}"
+      hx-get="{% url 'person_list' %}"
+      hx-trigger="keyup changed delay:300ms"
+      hx-target="#person-table"
+      hx-push-url="true"
+      hx-include="closest form"
+    />
+
+    <label>
+      Active:
+      <select name="active">
+        <option value="active" {% if filters.active == 'active' %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if filters.active == 'inactive' %}selected{% endif %}>Inactive</option>
+        <option value="all" {% if filters.active == 'all' %}selected{% endif %}>All</option>
+      </select>
+    </label>
+
+    <label>
+      Type:
+      <select name="type">
+        <option value="both" {% if filters.type == 'both' %}selected{% endif %}>Both</option>
+        <option value="individual" {% if filters.type == 'individual' %}selected{% endif %}>Individual</option>
+        <option value="ensemble" {% if filters.type == 'ensemble' %}selected{% endif %}>Ensemble</option>
+      </select>
+    </label>
+
+    <label>
+      Review:
+      <select name="needs_review">
+        <option value="all" {% if filters.review == "all" %}selected{% endif %}>All</option>
+        <option value="needs_review" {% if filters.review == "needs_review" %}selected{% endif %}>Needs review</option>
+      </select>
+    </label>
+
+    <label>
+      Role:
+      <select name="role">
+        <option value="" {% if not filters.role %}selected{% endif %}>All roles</option>
+        {% for role in role_types %}
+          <option value="{{ role.id }}" {% if filters.role == role.id %}selected{% endif %}>{{ role.name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <button type="submit">Apply</button>
+  </fieldset>
+</form>
+
+<div id="person-table">
+  {% include "people/_person_table.html" %}
+</div>
+{% endblock %}
+

@@ -32,6 +32,7 @@ class Person(models.Model):
     death_date = models.DateField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
+    needs_review = models.BooleanField(default=False)  # flag is set when a new user is created when entering a new piece. It indicates the record should be edited to complete the data beyond the name.
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
@@ -49,18 +50,34 @@ class Person(models.Model):
 
 class PersonRoleType(models.Model):
     """Role types, e.g. conductor, soloist, composer, arranger, etc."""
+    class RoleScope(models.TextChoices):
+        CONCERT = 'concert', "Concert"
+        MUSIC = 'music', 'Music'
+        BOTH = 'both', "Both"
+
     code = models.CharField(
         max_length=50,
         unique=True,
         help_text='Stable machine-readable identifier (e.g. CONDUCTOR)'
         )
+
     name = models.CharField(
         max_length=100,
         help_text='Human-readable name (e.g. Conductor)'
         )
+
+    scope = models.CharField(
+        max_length=10,
+        choices=RoleScope.choices,
+        null=False,
+        blank=False,
+        help_text="Where this role is applicable.",
+    )
+
     is_active = models.BooleanField(
         default=True,
         help_text='Soft-disable role types without breaking history')
+
 
     class Meta:
         ordering = ['name']

@@ -15,7 +15,13 @@ class MusicRoleInline(admin.TabularInline):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == 'role_type':
-            kwargs['queryset'] = PersonRoleType.objects.filter(is_active=True)
+            kwargs['queryset'] = PersonRoleType.objects.filter(
+                is_active=True,
+                scope__in=[
+                    PersonRoleType.RoleScope.MUSIC,
+                    PersonRoleType.RoleScope.BOTH,
+                ],
+            ).order_by('name')
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 

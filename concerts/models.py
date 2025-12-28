@@ -1,5 +1,5 @@
 # concerts/models.py
-
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from venues.models import Venue
@@ -51,11 +51,61 @@ class ConcertRole(models.Model):
         related_name='concert_roles',
     )
 
+    is_active = models.BooleanField(
+        default=True,
+        help_text='Soft-disable roles without breaking history'
+    )
+
     display_order = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['display_order']
         unique_together = ('concert', 'person', 'role_type')
 
+    def clean(self):
+        if self.role_type.scope not in ("concert", "both"):
+            raise ValidationError({
+                "role_type": f"{self.role_type.name} is not a concert role."
+            })
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f"{self.person} -- {self.role_type}"
+
+
+class ConcertProgram(models.Model):
+    concert = models.ForeignKey(
+        'concerts.Concert',
+        on_delete=models.CASCADE,
+        related_name='program_items',
+    )
+
+    music = models.ForeignKey(
+        'music.Music',
+        on_delete=models.PROTECT,
+        related_name='program_appearances',
+    )
+
+    program_order = models.PositiveIntegerField(
+        help_text="Order of performance in the concert program",
+    )
+
+    notes = models.TextField(
+        blank=True,
+        help_text="Optional program-specific notes (movements, excerpts, etc.)",
+    )
+
+    class Meta:
+        ordering = ['program_order']
+        constraints = [
+            models.UniqueConstraint(
+                fields=['concert', 'program_order'],
+                name='uniq_program_order_per_concert',
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.concert} - #{self.program_order}: {self.music}"

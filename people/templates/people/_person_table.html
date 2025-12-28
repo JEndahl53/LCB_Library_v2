@@ -1,0 +1,55 @@
+<!-- HTMX table for person_list -->
+{% load people_extras %}
+
+<table>
+  <thead>
+  <tr>
+    <th>Last</th>
+    <th>First</th>
+    <th>Display</th>
+    <th>Roles</th>
+  </tr>
+  </thead>
+  <tbody>
+    {% for person in people %}
+      <tr>
+        <td>{{ person.last_name }}</td>
+        <td>{{ person.first_name }}</td>
+        <td>{{ person.display_name }}</td>
+        <td>
+          {% for role in derived_roles|dict_get:person.id %}
+            <span class="badge">{{ role.name }}</span>
+          {% empty %}
+            -
+          {% endfor %}
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<nav>
+  <span>
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+  </span>
+
+  <div>
+    {% if page_obj.has_previous %}
+      <a href="?page=1&active={{ filters.active }}&type={{filters.type}}&review={{ filters.review }}">
+        First
+      </a>
+      <a href="?page={{ page_obj.previous_page_number }}&active={{ filters.active }}&type={{filters.type}}&review={{ filters.review }}">
+        Previous
+      </a>
+    {% endif %}
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}&active={{ filters.active }}&type={{filters.type}}&review={{ filters.review }}">
+        Next
+      </a>
+      <a href="?page={{ page_obj.paginator.num_pages }}&active={{ filters.active }}&type={{filters.type}}&review={{ filters.review }}">
+        Last
+      </a>
+    {% endif %}
+  </div>
+</nav>
