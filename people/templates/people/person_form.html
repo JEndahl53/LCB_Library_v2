@@ -1,0 +1,21 @@
+<!-- people/templates/people/person_form.html -->
+<!-- this template is used to edit and add persons -->
+
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+
+<h1>{{ page_title }}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">
+      {{ submit_label|default:"Save" }}
+    </button>
+
+    <a href="{% url 'person_list' %}">Cancel</a>
+</form>
+{% endblock %}

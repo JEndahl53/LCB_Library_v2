@@ -15,7 +15,15 @@
       <tr>
         <td>{{ person.last_name }}</td>
         <td>{{ person.first_name }}</td>
-        <td>{{ person.display_name }}</td>
+        <td>
+          <a href="{% url 'person_detail' person.id %}">
+            {% if person.display_name %}
+              {{ person.display_name }}
+            {% else %}
+              {{ person.last_name }}
+            {% endif %}
+          </a>
+        </td>
         <td>
           {% for role in derived_roles|dict_get:person.id %}
             <span class="badge">{{ role.name }}</span>

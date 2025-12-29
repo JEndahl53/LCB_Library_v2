@@ -1,0 +1,18 @@
+<!-- people/templates/people/person_edit.html -->
+
+{% extends "base.html" %}
+
+{% block title %}Edit {{ person.display_name|default:person.last_name }}{% endblock %}
+
+{% block content %}
+<h1> Edit Person</h1>
+
+<form method="POST">
+  {% csrf_token %}
+
+  {{ form.as_p }}
+
+  <button type="submit">Save</button>
+  <a href="{% url 'person_detail' person.pk %}">Cancel</a>
+</form>
+{% endblock %}

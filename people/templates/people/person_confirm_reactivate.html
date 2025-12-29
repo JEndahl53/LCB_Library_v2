@@ -1,0 +1,20 @@
+<!-- people/templates/people/person_confirm_reactivate.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Reactivate Person</h1>
+
+<p>
+  Are you sure you want to reactivate
+  <strong>{{ person.display_name|default:person.last_name }}</strong>?
+</p>
+
+<p>This will make them visible again in normal lists.</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Yes, reactivate</button>
+  <a href="{% url 'person_detail' person.pk %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+{% endblock %}

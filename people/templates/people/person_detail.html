@@ -1,0 +1,49 @@
+<!-- people/templates/people/person_detail.html -->
+
+{% extends 'base.html' %}
+{% load people_extras %}
+
+{% block title %}People{% endblock %}
+
+{% block content %}
+
+<nav class="actions">
+  <a href="{% url 'person_edit' person.pk %}">Edit this person</a>
+  <a href="{% url 'person_list' %}">Back to Person List</a>
+</nav>
+
+<h1>
+  {% if person.display_name %}
+    {{ person.display_name }}
+  {% else %}
+    {{ person.last_name }}
+  {% endif %}
+</h1>
+
+<section>
+  <h2>Basic Information</h2>
+  <dl>
+    <dt>Type</dt><dd>{{ person.get_person_type_display }}</dd>
+    <dt>Status</dt><dd>{{ person.is_active|yesno:"Active,Inactive" }}</dd>
+    <dt>Needs Review</dt><dd>{{ person.needs_review|yesno:"Yes,No" }}</dd>
+    <dt>Birth Date</dt><dd>{{ person.birth_date|date:"F d, Y" }}</dd>
+    <dt>Death Date</dt><dd>{{ person.death_date|date:"F d, Y" }}</dd>
+  </dl>
+</section>
+
+<section>
+  <h2>Music Roles</h2>
+  {% include "people/_music_roles.html" %}
+</section>
+
+<section>
+  <h2>Concert Roles</h2>
+  {% include "people/_concert_roles.html" %}
+</section>
+
+<section>
+  <h2>Notes</h2>
+  <p>{{ person.notes|linebreaks }}</p>
+</section>
+
+{% endblock %}

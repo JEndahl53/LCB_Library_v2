@@ -1,0 +1,15 @@
+<!-- HTMX table for person_list -->
+{% load people_extras %}
+
+{% regroup music_roles by role_type as role_groups %}
+
+{% for group in role_groups %}
+  <h3>{{ group.grouper.name }}</h3>
+  <ul>
+    {% for role in group.list %}
+    <li>{{ role.music.title }}</li>
+    {% endfor %}
+  </ul>
+{% empty %}
+  <p>No music roles found.</p>
+{% endfor %}

@@ -1,0 +1,17 @@
+<!-- people/templates/people/person_confirm_delete.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Deactivate Person</h1>
+  <p>Are you sure you want to deactivate
+    <strong>{{ person.display_name|default:person.last_name }}</strong>?
+  </p>
+
+  <p>This will hide them from normal lists but preserve all history.</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, deactivate</button>
+    <a href="{% url 'person_detail' person.pk %}" class="btn btn-secondary">Cancel</a>
+  </form>
+{% endblock %}
