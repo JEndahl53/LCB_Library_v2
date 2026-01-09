@@ -1,0 +1,118 @@
+<!-- music/templates/music/music_detail.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ music.title }}</h1>
+
+{% if not music.is_active %}
+  <p class="warning">
+    This piece is inactive (archived) and not part of the current library.
+  </p>
+{% endif %}
+
+<section>
+  <h2>Library Details</h2>
+  <dl>
+    <dt>Location</dt>
+    <dd>
+      {% if music.location_drawer %}
+        Drawer {{ music.location_drawer }}, Folder {{ music.location_folder }}
+      {% else %}
+        --
+      {% endif %}
+    </dd>
+
+    <dt>Duration</dt>
+    <dd>{{music.get_duration_display }}</dd>
+
+    <dt>Difficulty</dt>
+    <dd>{{music.get_difficulty_display|default:"--" }}</dd>
+
+    <dt>Year Composed</dt>
+    <dd>{{ music.year_composed|default:"--" }}</dd>
+  </dl>
+</section>
+
+<section>
+  <h2>Genres</h2>
+  {% if music.genres.exists %}
+    <ul>
+      {% for genre in music.genres.all %}
+      <li>{{ genre.name }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+  <p>--</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2>People & Roles</h2>
+
+  {% if music.roles.exists %}
+  {% regroup music.roles.all by role_type as roles_by_type %}
+
+  {% for group in roles_by_type %}
+    <h3>{{ group.grouper.name }}</h3>
+    <ul>
+      {% for role in group.list %}
+      <li>{{ role.person }}</li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+  {% else %}
+  <p>No people are currently associated with this piece.</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2>Organizations</h2>
+
+  {% if music.organizations.exists %}
+  {% regroup music.organizations_links.all by role_type as org_links_by_type %}
+
+  {% for group in org_links_by_type %}
+  <h3>{{ group.grouper.name }}</h3>
+  <ul>
+    {% for link in group.list %}
+    <li>
+      {{ link.organization.name }}
+      {% if link.start_date or link.end_date %}
+      <small>
+        (
+        {% if link.start_date %}{{ link.start_date }}{% else %}?{% endif %}
+         -
+        {% if link.end_date %}{{ link.end_date }}{% else %}present{% endif %}
+        )
+      </small>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% endfor %}
+  {% else %}
+  <p>No organizations are currently associated with this piece.</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2>Flags</h2>
+  <ul>
+    <li>Score missing: {{ music.score_missing|yesno:"Yes,No" }}</li>
+    <li>Needs review: {{ music.needs_review|yesno:"Yes,No" }}</li>
+  </ul>
+</section>
+
+{% if music.notes %}
+<section>
+  <h2>Notes</h2>
+  <p>{{ music.notes|linebreaks }}</p>
+</section>
+{% endif %}
+
+<nav>
+  <a href="{% url 'music:music_list' %}">Back to Music List</a>
+</nav>
+
+{% endblock %}

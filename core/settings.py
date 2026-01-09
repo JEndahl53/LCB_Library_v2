@@ -45,7 +45,10 @@ INSTALLED_APPS = [
     'venues',
     'music',
     'concerts',
+    'organizations',
+    'genres',
     'migration_tools',
+
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,123 @@
+<!-- organizations/templates/organizations/organization_detail.html -->
+{% extends "base.html" %}
+
+{% block title %}Organization: {{ org.name }}{% endblock %}
+
+{% block content %}
+
+<nav class="actions">
+  <a href="{% url 'organizations:organization_edit' org.pk %}">Edit Organization</a>
+  <a href="{% url 'organizations:organization_list' %}">Back to Organizations</a>
+  {% if org.is_active %}
+    <a href="{% url 'organizations:organization_deactivate' org.pk %}">Deactivate Organization</a>
+  {% else %}
+    <a href="{% url 'organizations:organization_activate' org.pk %}">Activate Organization</a>
+  {% endif %}
+</nav>
+
+<h1>{{ org.name }}</h1>
+
+<section>
+  <h2>Status: {{ org.is_active|yesno:"Active,Inactive" }}</h2>
+</section>
+
+<section>
+  <h2>Statistics</h2>
+  <dl>
+    <dt>Total Unique Music Pieces:</dt>
+    <dd>{{ stats.total_music }}</dd>
+    {% for role, count in stats.role_counts.items %}
+      <dt>{{ role }} Links:</dt>
+      <dd>{{ count }}</dd>
+    {% endfor %}
+  </dl>
+</section>
+
+<section>
+  <h2>Basic Information</h2>
+  <dl>
+    {% if org.contact_person %}
+      <dt>Contact Person</dt>
+      <dd>{{ org.contact_person }}</dd>
+    {% endif %}
+
+    {% if org.contact_email %}
+      <dt>Contact Email</dt>
+      <dd>{{ org.contact_email }}</dd>
+    {% endif %}
+
+    {% if org.contact_phone %}
+      <dt>Contact Phone</dt>
+      <dd>{{ org.contact_phone }}</dd>
+    {% endif %}
+
+    {% if org.website %}
+      <dt>Website</dt>
+      <dd><a href="{{ org.website }}" target="_blank" rel="noopener">{{ org.website }}</a></dd>
+    {% endif %}
+  </dl>
+</section>
+
+<section>
+  <h2>Address</h2>
+  <p>
+    {% if org.street_address %}{{ org.street_address }}<br>{% endif %}
+    {% if org.city %}{{ org.city }}{% endif %}
+    {% if org.state %}, {{ org.state }}{% endif %}
+    {% if org.zip_code %} {{ org.zip_code }}{% endif %}
+    {% if org.country %}<br>{{ org.country }}{% endif %}
+  </p>
+</section>
+
+<section>
+  <h2>Roles</h2>
+  <p><a href="{% url 'organizations:organization_role_add' org.pk %}">Add New Role</a></p>
+  {% if roles %}
+    <ul>
+      {% for role in roles %}
+        <li>
+          {{ role.role_type.name }}
+          {% if role.notes %} - <em>{{ role.notes }}</em>{% endif %}
+          <a href="{% url 'organizations:organization_role_deactivate' role.pk %}" style="color: red; margin-left: 10px;">Deactivate</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No roles assigned to this organization.</p>
+  {% endif %}
+</section>
+
+<section>
+  <h2>Linked Music</h2>
+  {% if music_links %}
+    <table>
+      <thead>
+        <tr>
+          <th>Music Title</th>
+          <th>Role</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for link in music_links %}
+          <tr>
+            <td>{{ link.music.title }}</td>
+            <td>{{ link.role_type.name }}</td>
+            <td>{{ link.notes }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No music linked to this organization.</p>
+  {% endif %}
+</section>
+
+{% if org.notes %}
+<section>
+  <h2>Notes</h2>
+  {{ org.notes|linebreaks }}
+</section>
+{% endif %}
+
+{% endblock %}

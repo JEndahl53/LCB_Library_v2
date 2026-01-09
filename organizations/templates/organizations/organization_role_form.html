@@ -1,0 +1,17 @@
+<!-- organizations/templates/organizations/organization_role_form.html -->
+{% extends "base.html" %}
+
+{% block title %}Add Role to {{ org.name }}{% endblock %}
+
+{% block content %}
+
+<h1>Add Role to {{ org.name }}</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Add Role</button>
+  <a href="{{ org.get_absolute_url }}">Cancel</a>
+</form>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+<!-- HTMX table for organization_list -->
+
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Contact Person</th>
+    <th>Roles</th>
+    <th>Active</th>
+  </tr>
+  </thead>
+  <tbody>
+    {% for org in organizations %}
+      <tr>
+        <td>
+          <a href="{{ org.get_absolute_url }}">{{ org.name }}</a>
+        </td>
+        <td>{{ org.contact_person }}</td>
+        <td>
+          {% for role in org.roles.all %}
+            <span class="badge">{{ role.role_type.name }}</span>
+          {% empty %}
+            -
+          {% endfor %}
+        </td>
+        <td>{{ org.is_active|yesno:"Yes,No" }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<nav>
+  <span>
+    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+  </span>
+
+  <div>
+    {% if page_obj.has_previous %}
+      <a href="?page=1&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}">
+        First
+      </a>
+      <a href="?page={{ page_obj.previous_page_number }}&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}">
+        Previous
+      </a>
+    {% endif %}
+
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}">
+        Next
+      </a>
+      <a href="?page={{ page_obj.paginator.num_pages }}&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}">
+        Last
+      </a>
+    {% endif %}
+  </div>
+</nav>

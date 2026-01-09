@@ -1,0 +1,132 @@
+<!-- music/templates/music/music_list.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Music Library</h1>
+
+<form method="get" class="music_filters">
+  <fieldset>
+    <legend>Search & Filters</legend>
+
+    <!-- Search -->
+    <div>
+      <label for="id_q">Search</label>
+      <input
+        type="text"
+        name="q"
+        id="id_q"
+        value="{{ q }}"
+        placeholder="Title, composer, arranger, etc."
+        />
+    </div>
+
+    <!-- Genre filter -->
+    <div>
+      <label for="id_genre">Genre</label>
+      <select name="genre" id="id_genre">
+        <option value="">All genres</option>
+        {% for genre in genres %}
+          <option value="{{ genre.id }}"
+             {% if genre.id == selected_genre %}selected{% endif %}
+          >
+            {{ genre.name }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- Score missing -->
+    <div>
+      <label for="id_score_missing">Score missing</label>
+      <select name="score_missing" id="id_score_missing">
+        <option value="">Any</option>
+        <option value="1" {% if score_missing == "1" %}selected{% endif %}>
+        Yes
+        </option>
+        <option value="0" {%if score_missing == "0" %}selected{% endif %}>
+        No
+        </option>
+      </select>
+    </div>
+
+    <!-- Needs review -->
+    <div>
+      <label for="id_needs_review">Needs review</label>
+      <select name="needs_review" id="id_needs_review">
+        <option value="">All</option>
+        <option value="1" {% if needs_review == "1" %}selected{% endif %}>
+          Yes
+        </option>
+        <option value="0" {% if needs_review == "0" %}selected{% endif %}>
+          No
+        </option>
+      </select>
+    </div>
+
+    <div>
+      <button type="submit">Apply</button>
+      <a href="{% url 'music:music_list' %}">Clear</a>
+    </div>
+  </fieldset>
+</form>
+
+<hr />
+
+{% if music_list %}
+  <table class="music_table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Genres</th>
+        <th>Location</th>
+        <th>Duration</th>
+        <th>Flags</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for music in music_list %}
+        <tr>
+          <td>
+            <a href="{% url 'music:music_detail' music.pk %}">
+              {{ music.title }}
+            </a>
+          </td>
+
+          <td>
+            {% for genre in music.genres.all %}
+              {{ genre.name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+              --
+            {% endfor %}
+          </td>
+
+          <td>
+            {% if music.location_drawer %}
+              D{{ music.location_drawer }} - {{ music.location_number }}
+            {% else %}
+              --
+            {% endif %}
+          </td>
+
+          <td>
+            {{ music.get_duration_display }}
+          </td>
+
+          <td>
+            {% if music.score_missing %}
+              <span class="flag flag-warning">Score missing</span>
+            {% endif %}
+            {% if music.needs_review %}
+              <span class="flag flag-review">Needs review</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No music matches your criteria.</p>
+{% endif %}
+
+{% endblock %}

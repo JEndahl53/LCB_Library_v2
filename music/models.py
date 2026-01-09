@@ -10,21 +10,8 @@ assigned via a ConcertRole field. This allows defining additional roles without 
 the model.
 """
 
+
 class Music(models.Model):
-
-    OWNED = 'OWN'
-    BORROWED = 'BOR'
-    ON_LOAN = 'LOAN'
-    RENTAL = 'RENT'
-    ARCHIVED = 'ARC'
-
-    STATUS_CHOICES = (
-        (OWNED, 'Owned'),
-        (BORROWED, 'Borrowed'),
-        (ON_LOAN, 'On Loan'),
-        (RENTAL, 'Rental'),
-        (ARCHIVED, 'Archived / Removed'),
-    )
 
     EASY = 'E'
     MODERATELY_EASY = 'ME'
@@ -69,21 +56,30 @@ class Music(models.Model):
         help_text="Year or range (free text, e.g.'1936', 'c. 1900')"
     )
 
-    status = models.CharField(
-        max_length=4,
-        choices=STATUS_CHOICES,
-        default=OWNED,
-        db_index=True,
+    genres = models.ManyToManyField(
+        "genres.Genre",
+        blank=True,
+        related_name="music"
     )
 
     notes = models.TextField(blank=True)
     score_missing = models.BooleanField(blank=True, default=False)
+    needs_review = models.BooleanField(blank=True, default=False)
+
+    is_active = models.BooleanField(
+        blank=True,
+        default=True,
+        help_text='Is this piece part of our active library collection?'
+    )
     duration = models.DurationField(help_text="Enter duration as mm:ss", blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Music"
         verbose_name = "Music"
-        ordering = ('title',)
+        ordering = ("title",)
 
     def __str__(self):
         return self.title
@@ -97,6 +93,16 @@ class Music(models.Model):
         minutes = total_seconds // 60
         seconds = total_seconds % 60
         return f"{minutes:02d}:{seconds:02d}"
+
+    def contributes_roles(self) -> bool:
+        """
+        Whether this music should contribute roles to
+        derived role calculations.
+
+        Rule:
+        - Only active music contributes roles
+        """
+        return self.is_active
 
 
 class MusicRole(models.Model):

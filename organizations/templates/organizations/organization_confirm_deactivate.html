@@ -1,0 +1,18 @@
+<!-- organizations/templates/organizations/organization_confirm_deactivate.html -->
+{% extends "base.html" %}
+
+{% block title %}Deactivate Organization: {{ org.name }}{% endblock %}
+
+{% block content %}
+
+<h1>Deactivate Organization: {{ org.name }}</h1>
+
+<p>Are you sure you want to deactivate the organization "{{ org.name }}"? This will soft-disable it without deleting its history.</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" style="background-color: red; color: white;">Yes, Deactivate</button>
+  <a href="{{ org.get_absolute_url }}">Cancel</a>
+</form>
+
+{% endblock %}

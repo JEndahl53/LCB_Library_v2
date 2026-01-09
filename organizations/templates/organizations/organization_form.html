@@ -1,0 +1,27 @@
+<!-- organizations/templates/organizations/organization_form.html -->
+<!-- this template is used to edit and add organizations -->
+
+{% extends "base.html" %}
+
+{% block title %}
+  {% if mode == 'edit' %}Edit{% else %}Add{% endif %} Organization
+{% endblock %}
+
+{% block content %}
+
+<h1>{% if mode == 'edit' %}Edit{% else %}Add{% endif %} Organization</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">
+    {% if mode == 'edit' %}Update{% else %}Add{% endif %} Organization
+  </button>
+
+  {% if mode == 'edit' %}
+    <a href="{{ org.get_absolute_url }}">Cancel</a>
+  {% else %}
+    <a href="{% url 'organizations:organization_list' %}">Cancel</a>
+  {% endif %}
+</form>
+{% endblock %}

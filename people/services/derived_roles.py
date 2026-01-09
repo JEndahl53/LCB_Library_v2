@@ -60,7 +60,7 @@ def _music_contributes_roles(music: Music) -> bool:
     Roles remain visible for ON_LOAN / BORROWED / RENTAL, etc.
     Only ARCHIVED suppresses role visibility
     """
-    return music.status != Music.ARCHIVED
+    return music.contributes_roles()
 
 
 def get_derived_roles_for_person(person: Person) -> List[PersonRoleType]:
