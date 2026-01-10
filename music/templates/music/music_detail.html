@@ -17,14 +17,14 @@
     <dt>Location</dt>
     <dd>
       {% if music.location_drawer %}
-        Drawer {{ music.location_drawer }}, Folder {{ music.location_folder }}
+        Drawer {{ music.location_drawer }}, Folder {{ music.location_number }}
       {% else %}
         --
       {% endif %}
     </dd>
 
     <dt>Duration</dt>
-    <dd>{{music.get_duration_display }}</dd>
+    <dd>{{ music.get_duration_display }}</dd>
 
     <dt>Difficulty</dt>
     <dd>{{music.get_difficulty_display|default:"--" }}</dd>
@@ -50,27 +50,58 @@
 <section>
   <h2>People & Roles</h2>
 
-  {% if music.roles.exists %}
-  {% regroup music.roles.all by role_type as roles_by_type %}
+  <p>
+    <a href="{% url 'music:music_role_add' music.pk %}">
+       Add composer / arranger / role
+    </a>
+  </p>
 
-  {% for group in roles_by_type %}
-    <h3>{{ group.grouper.name }}</h3>
-    <ul>
-      {% for role in group.list %}
-      <li>{{ role.person }}</li>
-      {% endfor %}
-    </ul>
-  {% endfor %}
+  {% if music.roles.exists %}
+    {% for role_type, people in music.roles_by_type.items %}
+      <h3>{{ role_type.name }}</h3>
+
+      <ul>
+        {% for person in people %}
+          <li>
+            {{ person }}
+
+            {% for role in music.roles.all %}
+              {% if role.person_id == person.id and role.role_type_id == role_type.id %}
+                <form
+                  method="post"
+                  action="{% url 'music:music_role_delete' music.pk role.pk %}"
+                  style="display: inline"
+                >
+                  {% csrf_token %}
+                  <button
+                      type="submit"
+                      title="Remove {{ person }} as {{ role_type.name }}"
+                  >
+                    Remove
+                  </button>
+                </form>
+              {% endif %}
+            {% endfor %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
   {% else %}
-  <p>No people are currently associated with this piece.</p>
+    <p>No people are currently associated with this piece.</p>
   {% endif %}
 </section>
 
 <section>
   <h2>Organizations</h2>
 
-  {% if music.organizations.exists %}
-  {% regroup music.organizations_links.all by role_type as org_links_by_type %}
+  <p>
+    <a href="{% url 'music:music_org_link_add' music.pk %}">
+      Add organization
+    </a>
+  </p>
+
+  {% if music.organization_links.exists %}
+  {% regroup music.organization_links.all by role_type as org_links_by_type %}
 
   {% for group in org_links_by_type %}
   <h3>{{ group.grouper.name }}</h3>
@@ -78,16 +109,25 @@
     {% for link in group.list %}
     <li>
       {{ link.organization.name }}
-      {% if link.start_date or link.end_date %}
-      <small>
-        (
-        {% if link.start_date %}{{ link.start_date }}{% else %}?{% endif %}
-         -
-        {% if link.end_date %}{{ link.end_date }}{% else %}present{% endif %}
-        )
-      </small>
-      {% endif %}
-    </li>
+        <form
+          method="post"
+          action="{% url 'music:music_org_link_delete' music.pk link.pk %}"
+          style="display: inline"
+          >
+          {% csrf_token %}
+          <button> type="submit">Remove</button>
+        </form>
+
+        {% if link.start_date or link.end_date %}
+          <small>
+            (
+            {% if link.start_date %}{{ link.start_date }}{% else %}?{% endif %}
+             -
+            {% if link.end_date %}{{ link.end_date }}{% else %}present{% endif %}
+            )
+          </small>
+        {% endif %}
+      </li>
     {% endfor %}
   </ul>
   {% endfor %}

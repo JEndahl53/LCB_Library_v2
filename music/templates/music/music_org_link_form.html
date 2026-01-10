@@ -1,0 +1,54 @@
+<!-- music/templates/music/music_org_link_form.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Add organization for: {{ music.title }}</h1>
+
+<form method="POST" novalidate>
+  {% csrf_token %}
+
+  {{ form.non_field_errors }}
+
+  <fieldset>
+    <legend>Organization Relationship</legend>
+
+    <div class="form-row">
+      {{ form.organization.label_tag }}
+      {{ form.organization }}
+      {{ form.organization.errors }}
+    </div>
+
+    <div class="form-row">
+      {{ form.role_type.label_tag }}
+      {{ form.role_type }}
+      {{ form.role_type.errors }}
+    </div>
+
+    <div class="form-row">
+      {{ form.start_date.label_tag }}
+      {{ form.start_date }}
+      {{ form.start_date.errors }}
+    </div>
+
+    <div class="form-row">
+      {{ form.end_date.label_tag }}
+      {{ form.end_date }}
+      {{ form.end_date.errors }}
+    </div>
+
+    <div class="form-row">
+      {{ form.notes.label_tag }}
+      {{ form.notes }}
+      {{ form.notes.errors }}
+    </div>
+  </fieldset>
+
+  <div class="form-actions">
+    <button type="submit">Add organization</button>
+      <a href="{% url 'music:music_detail' music.pk %}">Cancel</a>
+  </div>
+</form>
+{% endblock %}
+
+

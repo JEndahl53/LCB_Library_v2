@@ -66,6 +66,11 @@ class PersonRoleType(models.Model):
         help_text='Human-readable name (e.g. Conductor)'
         )
 
+    display_order = models.PositiveIntegerField(
+        default=100,
+        help_text="Lower numbers appear earlier in lists."
+    )
+
     scope = models.CharField(
         max_length=10,
         choices=RoleScope.choices,

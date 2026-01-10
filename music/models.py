@@ -1,6 +1,7 @@
 # music/models.py
 from django.core.exceptions import ValidationError
 from django.db import models
+from collections import OrderedDict
 
 # Create your models here.
 
@@ -104,6 +105,33 @@ class Music(models.Model):
         """
         return self.is_active
 
+    def roles_by_type(self):
+        """
+        Returns roles grouped by role type, ordered by role_type.display_order
+        Example:
+        {
+            "Composer": [Person, Person],
+            "Arranger": [Person],
+        }
+        """
+        roles = (
+            self.roles
+            .select_related("role_type", "person")
+            .order_by(
+                "role_type__display_order",
+                "display_order",
+                "person__last_name"
+            )
+        )
+
+        grouped = OrderedDict()
+
+        for role in roles:
+            role_type = role.role_type
+            grouped.setdefault(role_type, []).append(role.person)
+
+        return grouped
+
 
 class MusicRole(models.Model):
     music = models.ForeignKey(
@@ -146,3 +174,46 @@ class MusicRole(models.Model):
 
     def __str__(self):
         return f"{self.person} as {self.role_type}"
+
+
+class MusicOrganizationLink(models.Model):
+    music = models.ForeignKey(
+        'music.Music',
+        on_delete=models.CASCADE,
+        related_name='organization_links',
+    )
+
+    organization = models.ForeignKey(
+        'organizations.Organization',
+        on_delete=models.CASCADE,
+        related_name='music_links',
+    )
+
+    role_type = models.ForeignKey(
+        'organizations.OrganizationRoleType',
+        on_delete=models.PROTECT,
+        related_name='music_links',
+    )
+
+    start_date = models.DateField(
+        null=True,
+        blank=True,
+        help_text="When this relationship began"
+    )
+    end_date = models.DateField(
+        null=True,
+        blank=True,
+        help_text="When this relationship ended"
+    )
+
+    date_added = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        unique_together = ('music', 'organization', 'role_type', 'start_date')
+        ordering = ['role_type__name', 'start_date']
+
+    def __str__(self):
+        return f'{self.organization} - {self.role_type}  ({self.music})'

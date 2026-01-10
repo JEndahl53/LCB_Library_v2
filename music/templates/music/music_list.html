@@ -78,6 +78,7 @@
     <thead>
       <tr>
         <th>Title</th>
+        <th>Attribution</th>
         <th>Genres</th>
         <th>Location</th>
         <th>Duration</th>
@@ -91,6 +92,30 @@
             <a href="{% url 'music:music_detail' music.pk %}">
               {{ music.title }}
             </a>
+          </td>
+
+          <td>
+            {% with roles=music.roles_by_type %}
+            {% if roles %}
+            <div class="attribution">
+              {% for role_type, people in roles.items %}
+              <span class="role-group">
+                {% if role_type.name|lower == 'composer' %}
+                  <span class="role-name">by:</span>
+                {% elif role_type.name|lower == 'arranger' %}
+                  <span class="role-name">arr.:</span>
+                {% else %}
+                  {{ role_type.name|lower}}
+                {% endif %}
+                {{ people|join:", " }}
+              </span>
+              {% if not forloop.last %} . {% endif %}
+              {% endfor %}
+            </div>
+            {% else %}
+            -
+            {% endif %}
+            {% endwith %}
           </td>
 
           <td>

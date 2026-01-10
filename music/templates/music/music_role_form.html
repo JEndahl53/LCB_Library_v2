@@ -1,0 +1,48 @@
+<!-- music/templates/music/music_role_form.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>
+  Add role for: {{ music.title }}
+</h1>
+
+<form method="post" novalidate>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="form-errors">
+     {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <fieldset>
+    <legend>Roll Assignment</legend>
+
+    <div class="form-row">
+      {{ form.person.label_tag }}
+      {{ form.person }}
+      {{ form.person.errors }}
+    </div>
+
+    <div class="form-row">
+      {{ form.role_type.label_tag }}
+      {{ form.role_type }}
+      {{ form.role_type.errors }}
+    </div>
+
+    <div class="form-row">
+      {{ form.display_order.label_tag }}
+      {{ form.display_order }}
+      {{ form.display_order.errors }}
+    </div>
+  </fieldset>
+
+  <div class="form-actions">
+    <button type="submit">Add role</button>
+    <a href="{% url 'music:music_detail' music.pk %}">Cancel</a>
+  </div>
+</form>
+
+{% endblock %}
