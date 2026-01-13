@@ -13,6 +13,9 @@
 
 <form method="post">
   {% csrf_token %}
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
   {{ form.as_p }}
   <button type="submit">
     {% if mode == 'edit' %}Update{% else %}Add{% endif %} Organization
@@ -20,6 +23,8 @@
 
   {% if mode == 'edit' %}
     <a href="{{ org.get_absolute_url }}">Cancel</a>
+  {% elif next %}
+    <a href="{{ next }}">Cancel</a>
   {% else %}
     <a href="{% url 'organizations:organization_list' %}">Cancel</a>
   {% endif %}

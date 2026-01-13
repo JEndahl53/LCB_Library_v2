@@ -1,0 +1,27 @@
+<!-- concerts/templates/concerts/concert_add.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Add Concert</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <button type="submit">Create Concert</button>
+  <a href="{% url 'concerts:concert_list' %}">Cancel</a>
+</form>
+
+<p>
+  Don't see the venue you need?
+  <a href="{% url 'venues:venue_add' %}?next={{ request.path }}">Add a new venue</a>
+</p>
+
+<hr>
+
+<nav>
+  <a href="{% url 'concerts:concert_list' %}">
+    Back to concert list
+  </a>
+</nav>
+{% endblock %}

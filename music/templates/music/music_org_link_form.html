@@ -46,9 +46,20 @@
 
   <div class="form-actions">
     <button type="submit">Add organization</button>
-      <a href="{% url 'music:music_detail' music.pk %}">Cancel</a>
+      <a href="{% url 'music:music_edit' music.pk %}">Cancel</a>
   </div>
 </form>
+
+<p>
+  Don't see the organization you need?
+  <a href="{% url 'organizations:organization_add' %}?next={{ request.path }}">Add a new organization</a>
+</p>
+
+<p>
+  Need a new relationship type?
+  <a href="{% url 'organizations:org_role_type_list' %}">Manage relationship types</a>
+</p>
+
 {% endblock %}
 
 

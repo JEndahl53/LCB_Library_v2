@@ -1,0 +1,40 @@
+<!-- people/templates/people/role_type_list.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Role Types</h1>
+
+<p>
+  <a href="{% url 'people:role_type_add' %}">Add role type</a>
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Name</th>
+      <th>Scope</th>
+      <th>Display Order</th>
+      <th>Active</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for role_type in role_types %}
+      <tr>
+        <td>{{ role_type.code }}</td>
+        <td>{{ role_type.name }}</td>
+        <td>{{ role_type.get_scope_display }}</td>
+        <td>{{ role_type.display_order }}</td>
+        <td>{{ role_type.is_active|yesno:"Yes,No" }}</td>
+        <td>
+          <a href="{% url 'people:role_type_edit' role_type.id %}">Edit</a>
+          <a href="{% url 'people:role_type_delete' role_type.id %}">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6">No role types.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

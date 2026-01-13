@@ -1,0 +1,72 @@
+<!-- concerts/templates/concerts/concert_detail.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ concert.title }}</h1>
+
+<dl>
+  <dt>Date</dt>
+  <dd>{{ concert.date|date:"F j, Y, g:i a"|default:"TBD" }}</dd>
+
+  <dt>Venue</dt>
+  <dd>
+    {% if concert.venue %}
+      {{ concert.venue.name }}
+      {% if concert.venue.city %}
+        <br><small>{{ concert.venue.get_address2 }}</small>
+      {% endif %}
+    {% else %}
+      TBD
+    {% endif %}
+  </dd>
+
+  {% if concert.description %}
+    <dt>Description</dt>
+    <dd>{{ concert.description|linebreaks }}</dd>
+  {% endif %}
+</dl>
+
+<hr>
+
+<h2>Program</h2>
+{% if concert.program_items.exists %}
+  <ol>
+    {% for item in concert.program_items.all %}
+      <li>
+        <strong>{{ item.music.title }}</strong>
+        {% if item.notes %}
+          <br><small>{{ item.notes }}</small>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ol>
+{% else %}
+  <p>Program to be announced.</p>
+{% endif %}
+
+<hr>
+
+<h2>Artists</h2>
+{% if concert.roles.exists %}
+  <ul>
+    {% for role in concert.roles.all %}
+      <li>
+        <strong>{{ role.role_type.name }}:</strong>
+        {{ role.person }}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Artists to be announced.</p>
+{% endif %}
+
+<hr>
+
+<nav>
+  {% if request.user.is_staff %}
+    <a href="{% url 'concerts:concert_edit' concert.pk %}">Edit concert</a>
+  {% endif %}
+  <a href="{% url 'concerts:concert_list' %}">Back to concert list</a>
+</nav>
+
+{% endblock %}

@@ -51,6 +51,19 @@ class MusicRoleForm(forms.ModelForm):
             "display_order",
         ]
 
+    person = forms.ModelChoiceField(
+        queryset=Person.objects.filter(is_active=True).order_by("last_name", "first_name"),
+        required=True,
+    )
+
+    role_type = forms.ModelChoiceField(
+        queryset=PersonRoleType.objects.filter(
+            is_active=True,
+            scope__in=["music", "both"],
+        ).order_by("display_order", "name"),
+        required=True,
+    )
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -104,3 +117,15 @@ class MusicOrganizationLinkForm(forms.ModelForm):
 
         self.fields["organization"].label = "Organization"
         self.fields["role_type"].label = "Relationship"
+
+
+class MusicGenresAssignForm(forms.ModelForm):
+    class Meta:
+        model = Music
+        fields = ["genres"]
+
+    genres = forms.ModelMultipleChoiceField(
+        queryset=Genre.objects.filter(is_active=True).order_by("name"),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+    )

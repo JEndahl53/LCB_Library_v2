@@ -1,0 +1,141 @@
+<!-- music/templates/music/music_edit.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Edit Music: {{ music.title }}</h1>
+
+<hr>
+
+<!-- ===================== -->
+<!-- Core Music Fields     -->
+<!-- ===================== -->
+<section>
+  <h2>Music Details</h2>
+
+  {% include "music/_music_form.html" %}
+</section>
+
+<hr>
+
+<!-- ================== -->
+<!-- Genres             -->
+<!-- ================== -->
+
+<section>
+  <h2>Genres</h2>
+
+  {% if music.genres.exists %}
+    <ul>
+      {% for genre in music.genres.all %}
+        <li>{{ genre.name }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No genres assigned.</p>
+  {% endif %}
+
+  <p>
+    <a href="{% url 'music:music_genres_assign' music.pk %}">
+      Add / change genres
+    </a>
+  </p>
+</section>
+
+<hr>
+
+<!-- ==================== -->
+<!-- People & Roles       -->
+<!-- ==================== -->
+<section>
+  <h2>People & Roles</h2>
+
+  {% if music.roles.exists %}
+    <ul>
+      {% for role_type, people in music.roles_by_type.items %}
+        <li>
+          <strong>{{ role_type.name }}:</strong>
+          {{ people|join:", " }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No people are currently associated with this piece.</p>
+  {% endif %}
+
+  <p>
+    <a href="{% url "music:music_roles_edit" music.pk %}">
+      Add / remove people & roles
+    </a>
+  </p>
+</section>
+
+<hr>
+
+<!-- ============================ -->
+<!-- Availability / Organizations -->
+<!-- ============================ -->
+<section>
+  <h2>Availability & Ownership</h2>
+
+  {% if music.organization_links.exists %}
+    {% regroup music.organization_links.all by role_type as org_links_by_type %}
+
+    {% for group in org_links_by_type %}
+      <h3>{{ group.grouper.name }}</h3>
+      <ul>
+        {% for link in group.list %}
+          <li>
+          {{ link.organization.name }}
+
+            <form
+              method="POST"
+              action="{% url 'music:music_organization_delete' music.pk link.pk %}"
+              style = "display:inline"
+            >
+              {% csrf_token %}
+              <button type="submit" name="delete_organization" value="2">
+                Remove
+              </button>
+            </form>
+
+          {% if link.start_date or link.end_date %}
+            <small>
+              ({% if link.start_date %}{{ link.start_date|date:"F j, Y" }}{% else %}?{% endif %}
+              –
+              {% if link.end_date %}{{ link.end_date|date:"F j, Y" }}{% else %}present{% endif %}
+              )
+            </small>
+          {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endfor %}
+  {% else %}
+    <p>No organization relationships are recorded</p>
+  {% endif %}
+
+  <p>
+    <a href="{% url 'music:music_org_link_add' music.pk %}">
+    Add borrowing / lending / ownership relationship
+    </a>
+  </p>
+
+</section>
+
+<hr>
+
+<!-- ======================= -->
+<!-- Navigation              -->
+<!-- ======================= -->
+<nav>
+  <a href="{% url 'music:music_detail' music.pk %}">
+    View music details
+  </a>
+
+  <a href="{% url 'music:music_list' %}">
+    Back to music list
+  </a>
+</nav>
+
+{% endblock %}

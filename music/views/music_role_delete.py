@@ -1,15 +1,21 @@
 # music/views/music_role_delete.py
 
+
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import redirect, get_object_or_404
-from django.views.decorators.http import require_POST
 
 from music.models import Music, MusicRole
 
 
-@require_POST
+@staff_member_required
 def music_role_delete(request, music_pk, role_pk):
-    music = get_object_or_404(Music, pk=music_pk)
-    role = get_object_or_404(MusicRole, pk=role_pk, music=music)
+    role = get_object_or_404(
+        MusicRole,
+        id=role_pk,
+        music_id=music_pk,
+    )
 
-    role.delete()
-    return redirect('music:music_detail', pk=music.pk)
+    if request.method == "POST":
+        role.delete()
+
+    return redirect('music:music_roles_edit', pk=music_pk)

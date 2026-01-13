@@ -132,6 +132,59 @@ class Music(models.Model):
 
         return grouped
 
+    def update_availability_from_organizations(self, *, save=True):
+        """
+        Derive is_active based on current organization relationships.
+
+        Rules:
+        – Active LOANED_TO -> Inactive
+        – Active BORROWED_FROM / RENTAL_VENDOR -> active
+        – End-dated relationships ignored
+        """
+        active_links = self.organization_links.filter(
+            end_date__isnull=True
+        ).select_related("role_type")
+
+        # Default: do not change availability
+        new_active = self.is_active
+
+        for link in active_links:
+            code = link.role_type.code
+
+            if code == "LOANED_TO":
+                new_active = False
+                break
+
+            if code in {"BORROWED_FROM", "RENTAL_VENDOR", "OWNED_BY"}:
+                new_active = True
+
+        if new_active != self.is_active:
+            self.is_active = new_active
+            if save:
+                self.save(update_fields=["is_active"])
+
+
+    def get_availability_badge(self):
+        """
+        Return a short availability label for list display, or None.
+        """
+        if not self.is_active:
+            return "Unavailable"
+
+        active_links = self.organization_links.filter(
+            end_date__isnull=True
+        ).select_related("role_type")
+
+        for link in active_links:
+            code = link.role_type.code
+
+            if code == "BORROWED_FROM":
+                return "Borrowed"
+            if code == "RENTAL_VENDOR":
+                return "Rented"
+
+        return None
+
 
 class MusicRole(models.Model):
     music = models.ForeignKey(
@@ -159,8 +212,8 @@ class MusicRole(models.Model):
     display_order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ['display_order']
-        unique_together = ('music', 'person', 'role_type')
+        ordering = ["display_order"]
+        unique_together = ("music", "person", "role_type")
 
     def clean(self):
         if self.role_type.scope not in ("music", "both"):
@@ -178,21 +231,21 @@ class MusicRole(models.Model):
 
 class MusicOrganizationLink(models.Model):
     music = models.ForeignKey(
-        'music.Music',
+        "music.Music",
         on_delete=models.CASCADE,
-        related_name='organization_links',
+        related_name="organization_links",
     )
 
     organization = models.ForeignKey(
-        'organizations.Organization',
+        "organizations.Organization",
         on_delete=models.CASCADE,
-        related_name='music_links',
+        related_name="music_links",
     )
 
     role_type = models.ForeignKey(
-        'organizations.OrganizationRoleType',
+        "organizations.OrganizationRoleType",
         on_delete=models.PROTECT,
-        related_name='music_links',
+        related_name="music_links",
     )
 
     start_date = models.DateField(
@@ -212,8 +265,8 @@ class MusicOrganizationLink(models.Model):
     notes = models.TextField(blank=True)
 
     class Meta:
-        unique_together = ('music', 'organization', 'role_type', 'start_date')
-        ordering = ['role_type__name', 'start_date']
+        unique_together = ("music", "organization", "role_type", "start_date")
+        ordering = ["role_type__name", "start_date"]
 
     def __str__(self):
-        return f'{self.organization} - {self.role_type}  ({self.music})'
+        return f"{self.organization} - {self.role_type}  ({self.music})"

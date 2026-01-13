@@ -1,0 +1,28 @@
+<!-- music/templates/music/music_genres_assign.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Select genres</h1>
+<p><strong>{{ music.title }}</strong></p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  {{ form.genres.errors }}
+  {{ form.genres }}
+
+  <div class="form-actions">
+    <button type="submit">Save genres</button>
+    <a href="{% url 'music:music_edit' music.pk%}">Cancel</a>
+  </div>
+</form>
+
+<p>
+  Don't see the genre you need?
+  <a href="{% url 'genres:genre_add' %}?next={{ request.path }}">Add a new genre</a>
+</p>
+
+{% endblock %}
+

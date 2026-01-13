@@ -1,0 +1,39 @@
+<!-- venues/templates/venues/venue_form.html -->
+
+{% extends "base.html" %}
+
+{% block title %}
+  {% if mode == 'edit' %}Edit{% else %}Add{% endif %} Venue
+{% endblock %}
+
+{% block content %}
+
+<h1>{% if mode == 'edit' %}Edit{% else %}Add{% endif %} Venue</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+  {{ form.as_p }}
+  <button type="submit">
+    {% if mode == 'edit' %}Update{% else %}Add{% endif %} Venue
+  </button>
+
+  {% if mode == 'edit' %}
+    <a href="{% url 'venues:venue_list' %}">Cancel</a>
+  {% elif next %}
+    <a href="{{ next }}">Cancel</a>
+  {% else %}
+    <a href="{% url 'venues:venue_list' %}">Cancel</a>
+  {% endif %}
+</form>
+
+<hr>
+
+<nav>
+  <a href="{% url 'venues:venue_list' %}">
+    Back to venue list
+  </a>
+</nav>
+{% endblock %}

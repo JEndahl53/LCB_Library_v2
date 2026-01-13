@@ -1,0 +1,87 @@
+<!-- concerts/templates/concerts/concert_roles_edit.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Edit People & Roles</h1>
+<p><strong>{{ concert.title }}</strong></p>
+
+<hr>
+
+<!-- Existing assignments -->
+<section>
+  <h2>Current assignments</h2>
+
+  {% if roles %}
+    <ul>
+      {% for role in roles %}
+        <li>
+          {{ role.person }} – {{ role.role_type.name }}
+
+          <form
+            method="POST"
+            action="{% url 'concerts:concert_role_delete' concert.id role.pk %}"
+            style="display: inline"
+            >
+            {% csrf_token %}
+            <button type="submit">Remove</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No people assigned.</p>
+  {% endif %}
+</section>
+
+<hr>
+
+<!-- Add assignment -->
+<section>
+  <h2>Add person to role</h2>
+
+  <form method="POST">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div>
+      {{ form.person.label_tag }}
+      {{ form.person }}
+      {{ form.person.errors }}
+    </div>
+
+    <div>
+      {{ form.role_type.label_tag }}
+      {{ form.role_type }}
+      {{ form.role_type.errors }}
+    </div>
+
+    <div>
+      {{ form.display_order.label_tag }}
+      {{ form.display_order }}
+      {{ form.display_order.errors }}
+    </div>
+
+    <button type="submit">Add</button>
+  </form>
+
+  <p>
+    Don't see the person you need?
+    <a href="{% url 'people:person_add' %}?next={{ request.path }}">Add a new person</a>
+  </p>
+
+  <p>
+    Need a new role type?
+    <a href="{% url 'people:role_type_list' %}">Manage role types</a>
+  </p>
+</section>
+
+<hr>
+
+<nav>
+  <a href="{% url 'concerts:concert_edit' concert.pk %}">
+    Back to concert edit
+  </a>
+</nav>
+
+{% endblock %}

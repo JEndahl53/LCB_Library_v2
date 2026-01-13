@@ -1,0 +1,101 @@
+<!-- concerts/templates/concerts/concert_edit.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Edit Concert: {{ concert.title }}</h1>
+
+<hr>
+
+<!-- ===================== -->
+<!-- Core Concert Fields   -->
+<!-- ===================== -->
+<section>
+  <h2>Concert Details</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save Changes</button>
+  </form>
+
+  <p>
+    Don't see the venue you need?
+    <a href="{% url 'venues:venue_add' %}?next={{ request.path }}">Add a new venue</a>
+  </p>
+</section>
+
+<hr>
+
+<!-- ==================== -->
+<!-- Program              -->
+<!-- ==================== -->
+<section>
+  <h2>Program</h2>
+
+  {% if concert.program_items.exists %}
+    <ol>
+      {% for item in concert.program_items.all %}
+        <li>
+          <strong>{{ item.music.title }}</strong>
+          {% if item.notes %}
+            <br><small>{{ item.notes }}</small>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <p>No program items.</p>
+  {% endif %}
+
+  <p>
+    <a href="{% url 'concerts:concert_program_edit' concert.pk %}">
+      Add / change program items
+    </a>
+  </p>
+</section>
+
+<hr>
+
+<!-- ==================== -->
+<!-- People & Roles       -->
+<!-- ==================== -->
+<section>
+  <h2>People & Roles</h2>
+
+  {% if concert.roles.exists %}
+    <ul>
+      {% for role in concert.roles.all %}
+        <li>
+          <strong>{{ role.role_type.name }}:</strong>
+          {{ role.person }}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No people are currently associated with this concert.</p>
+  {% endif %}
+
+  <p>
+    <a href="{% url "concerts:concert_roles_edit" concert.pk %}">
+      Add / remove people & roles
+    </a>
+  </p>
+</section>
+
+<hr>
+
+<!-- ======================= -->
+<!-- Navigation              -->
+<!-- ======================= -->
+<nav>
+  <a href="{% url 'concerts:concert_detail' concert.pk %}">
+    View concert details
+  </a>
+
+  <a href="{% url 'concerts:concert_list' %}">
+    Back to concert list
+  </a>
+</nav>
+
+{% endblock %}

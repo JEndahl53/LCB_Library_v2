@@ -1,0 +1,36 @@
+<!-- genres/templates/genres/genre_list.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Genres</h1>
+
+<p>
+  <a href="{% url 'genres:genre_add' %}">Add genre</a>
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Active</th>
+      <th>Needs review</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for genre in genres %}
+      <tr>
+        <td>{{ genre.name }}</td>
+        <td>{{ genre.is_active|yesno:"Yes,No" }}</td>
+        <td>{{ genre.needs_review|yesno:"Yes,No" }}</td>
+        <td>
+          <a href="{% url 'genres:genre_edit' genre.id %}">Edit</a>
+          <a href="{% url 'genres:genre_delete' genre.id %}">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4">No genres.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

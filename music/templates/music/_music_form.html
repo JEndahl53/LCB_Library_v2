@@ -1,16 +1,5 @@
-<!-- music/templates/music/music_form.html -->
-
-{% extends 'base.html' %}
-
-{% block content %}
-
-<h1>
-  {% if is_create %}
-    Add Music
-  {% else %}
-    Edit Music: {{ music.title }}
-  {% endif %}
-</h1>
+<!-- music/templates/music/_music_form.html -->
+<!-- this is a partial template for adding/editing music -->
 
 <form method="post" novalidate>
   {% csrf_token %}
@@ -99,20 +88,9 @@
 
   <div class="form-actions">
     <button type="submit">
-      {% if is_create %}
-      Create
-      {% else %}
-      Save changes
-      {% endif %}
+      Save
     </button>
 
-    {% if not is_create %}
-     <a href="{% url 'music:music_detail' music.pk %}">Cancel</a>
-    {% else %}
-     <a href="{% url 'music:music_list' %}">Cancel</a>
-    {% endif %}
   </div>
 
 </form>
-
-{% endblock %}

@@ -1,0 +1,29 @@
+<!-- concerts/templates/concerts/concert_confirm_delete.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Delete Concert</h1>
+<p>
+  Are you sure you want to delete
+  <strong>{{ concert.title }}</strong>?
+</p>
+
+{% if concert.program_items.exists or concert.roles.exists %}
+  <p><strong>Warning:</strong> This will also delete all program items and role assignments for this concert.</p>
+{% endif %}
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Yes, delete</button>
+  <a href="{% url 'concerts:concert_list' %}">Cancel</a>
+</form>
+
+<hr>
+
+<nav>
+  <a href="{% url 'concerts:concert_list' %}">
+    Back to concert list
+  </a>
+</nav>
+{% endblock %}

@@ -12,6 +12,18 @@
 {% endif %}
 
 <section>
+  <h2>Current Status</h2>
+
+  {% with badge=music.get_availability_badge %}
+    {% if badge %}
+      <p><strong>{{ badge }}</strong></p>
+    {% else %}
+      <p><strong>Available</strong></p>
+    {% endif %}
+  {% endwith %}
+</section>
+
+<section>
   <h2>Library Details</h2>
   <dl>
     <dt>Location</dt>
@@ -50,39 +62,13 @@
 <section>
   <h2>People & Roles</h2>
 
-  <p>
-    <a href="{% url 'music:music_role_add' music.pk %}">
-       Add composer / arranger / role
-    </a>
-  </p>
-
   {% if music.roles.exists %}
     {% for role_type, people in music.roles_by_type.items %}
       <h3>{{ role_type.name }}</h3>
 
       <ul>
         {% for person in people %}
-          <li>
-            {{ person }}
-
-            {% for role in music.roles.all %}
-              {% if role.person_id == person.id and role.role_type_id == role_type.id %}
-                <form
-                  method="post"
-                  action="{% url 'music:music_role_delete' music.pk role.pk %}"
-                  style="display: inline"
-                >
-                  {% csrf_token %}
-                  <button
-                      type="submit"
-                      title="Remove {{ person }} as {{ role_type.name }}"
-                  >
-                    Remove
-                  </button>
-                </form>
-              {% endif %}
-            {% endfor %}
-          </li>
+          <li>{{ person }}</li>
         {% endfor %}
       </ul>
     {% endfor %}
@@ -92,13 +78,7 @@
 </section>
 
 <section>
-  <h2>Organizations</h2>
-
-  <p>
-    <a href="{% url 'music:music_org_link_add' music.pk %}">
-      Add organization
-    </a>
-  </p>
+  <h2>Availability and Ownership</h2>
 
   {% if music.organization_links.exists %}
   {% regroup music.organization_links.all by role_type as org_links_by_type %}
@@ -109,15 +89,6 @@
     {% for link in group.list %}
     <li>
       {{ link.organization.name }}
-        <form
-          method="post"
-          action="{% url 'music:music_org_link_delete' music.pk link.pk %}"
-          style="display: inline"
-          >
-          {% csrf_token %}
-          <button> type="submit">Remove</button>
-        </form>
-
         {% if link.start_date or link.end_date %}
           <small>
             (
@@ -152,6 +123,13 @@
 {% endif %}
 
 <nav>
+  {% if user.is_staff %}
+    <p>
+      <a href="{% url 'music:music_edit' music.pk %}">
+        Edit music details
+      </a>
+    </p>
+  {% endif %}
   <a href="{% url 'music:music_list' %}">Back to Music List</a>
 </nav>
 

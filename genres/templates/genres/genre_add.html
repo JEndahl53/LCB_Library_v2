@@ -1,0 +1,18 @@
+<!-- genres/tempates/genres/genre_add.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Add Genre</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {% if next %}
+    <input type="hidden" name="next" value="{{ next }}">
+  {% endif %}
+  {{ form.as_p }}
+
+  <button type="submit">Create</button>
+  <a href="{% if next %}{{ next }}{% else %}{% url 'genres:genre_list' %}{% endif %}">Cancel</a>
+</form>
+{% endblock %}

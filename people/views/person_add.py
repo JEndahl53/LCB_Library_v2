@@ -14,6 +14,8 @@ def is_staff_user(user):
 @login_required
 @user_passes_test(is_staff_user)
 def person_add(request):
+    next_url = request.GET.get('next') or request.POST.get('next')
+
     if request.method == 'POST':
         form = PersonForm(request.POST)
         if form.is_valid():
@@ -23,6 +25,8 @@ def person_add(request):
                 f"{person.display_name or person.last_name} was added successfully."
             )
 
+            if next_url:
+                return redirect(next_url)
             return redirect('people:person_detail', pk=person.pk)
     else:
         form = PersonForm()
@@ -34,5 +38,6 @@ def person_add(request):
             'form': form,
             'page_title': 'Add person',
             'submit_label': 'Create a person',
+            'next': next_url,
         }
     )

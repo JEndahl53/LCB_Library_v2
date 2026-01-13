@@ -22,4 +22,7 @@ urlpatterns = [
     path('people/', include('people.urls')),
     path('organizations/', include('organizations.urls')),
     path('music/', include('music.urls')),
+    path('genres/', include('genres.urls')),
+    path('venues/', include('venues.urls')),
+    path('concerts/', include('concerts.urls')),
 ]

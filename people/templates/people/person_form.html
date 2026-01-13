@@ -11,11 +11,14 @@
 
 <form method="post">
     {% csrf_token %}
+    {% if next %}
+      <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
     {{ form.as_p }}
     <button type="submit">
       {{ submit_label|default:"Save" }}
     </button>
 
-    <a href="{% url 'person_list' %}">Cancel</a>
+    <a href="{% if next %}{{ next }}{% else %}{% url 'people:person_list' %}{% endif %}">Cancel</a>
 </form>
 {% endblock %}

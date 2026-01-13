@@ -1,0 +1,16 @@
+<!-- people/templates/people/role_type_edit.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Edit Role Type</h1>
+<p><strong>{{ role_type.name }}</strong> ({{ role_type.code }})</p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <button type="submit">Save</button>
+  <a href="{% url 'people:role_type_list' %}">Cancel</a>
+</form>
+{% endblock %}

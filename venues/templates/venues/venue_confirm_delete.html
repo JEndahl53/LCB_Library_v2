@@ -1,0 +1,25 @@
+<!-- venues/templates/venues/venue_confirm_delete.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Delete Venue</h1>
+<p>
+  Are you sure you want to delete
+  <strong>{{ venue.name }}</strong>?
+</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Yes, delete</button>
+  <a href="{% url 'venues:venue_list' %}">Cancel</a>
+</form>
+
+<hr>
+
+<nav>
+  <a href="{% url 'venues:venue_list' %}">
+    Back to venue list
+  </a>
+</nav>
+{% endblock %}

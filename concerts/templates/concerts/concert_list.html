@@ -1,0 +1,37 @@
+<!-- concerts/templates/concerts/concert_list.html -->
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Concerts</h1>
+
+<p>
+  <a href="{% url 'concerts:concert_add' %}">Add concert</a>
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Date</th>
+      <th>Venue</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for concert in concerts %}
+      <tr>
+        <td>{{ concert.title }}</td>
+        <td>{{ concert.date|date:"F j, Y, g:i a"|default:"TBD" }}</td>
+        <td>{{ concert.venue|default:"TBD" }}</td>
+        <td>
+          <a href="{% url 'concerts:concert_detail' concert.id %}">View</a>
+          <a href="{% url 'concerts:concert_edit' concert.id %}">Edit</a>
+          <a href="{% url 'concerts:concert_delete' concert.id %}">Delete</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4">No concerts.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -10,6 +10,10 @@ from organizations.views.organization_activate import organization_activate
 from organizations.views.organization_role_add import organization_role_add
 from organizations.views.organization_role_activate import organization_role_activate
 from organizations.views.organization_role_deactivate import organization_role_deactivate
+from organizations.views.org_role_type_list import org_role_type_list
+from organizations.views.org_role_type_add import org_role_type_add
+from organizations.views.org_role_type_edit import org_role_type_edit
+from organizations.views.org_role_type_delete import org_role_type_delete
 
 app_name = "organizations"
 
@@ -23,4 +27,8 @@ urlpatterns = [
     path('<int:org_pk>/role/add/', organization_role_add, name='organization_role_add'),
     path('role/<int:pk>/activate/', organization_role_activate, name='organization_role_activate'),
     path('role/<int:pk>/deactivate/', organization_role_deactivate, name='organization_role_deactivate'),
+    path('role-types/', org_role_type_list, name='org_role_type_list'),
+    path('role-types/add/', org_role_type_add, name='org_role_type_add'),
+    path('role-types/<int:pk>/edit/', org_role_type_edit, name='org_role_type_edit'),
+    path('role-types/<int:pk>/delete/', org_role_type_delete, name='org_role_type_delete'),
 ]

@@ -1,11 +1,12 @@
 # music/views/music_add.py
 # Common form for music creation and editing (people used two different views)
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect
 
 from music.forms import MusicForm
 
-
+@staff_member_required
 def music_add(request):
     if request.method == "POST":
         form = MusicForm(request.POST)
@@ -17,10 +18,8 @@ def music_add(request):
 
     return render(
         request,
-        "music/music_form.html",
+        "music/music_add.html",
         {
             "form": form,
-            "music": None,
-            "is_create": True,
         }
     )

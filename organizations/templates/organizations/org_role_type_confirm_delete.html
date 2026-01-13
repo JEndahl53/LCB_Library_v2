@@ -1,0 +1,25 @@
+<!-- organizations/templates/organizations/org_role_type_confirm_delete.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Delete Organization Role Type</h1>
+<p>
+  Are you sure you want to delete
+  <strong>{{ role_type.name }}</strong> ({{ role_type.code }})?
+</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Yes, delete</button>
+  <a href="{% url 'organizations:org_role_type_list' %}">Cancel</a>
+</form>
+
+<hr>
+
+<nav>
+  <a href="{% url 'organizations:org_role_type_list' %}">
+    Back to role type list
+  </a>
+</nav>
+{% endblock %}

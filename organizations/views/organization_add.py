@@ -11,11 +11,15 @@ from organizations.views._auth import is_staff_user
 @login_required
 @user_passes_test(is_staff_user)
 def organization_add(request):
+    next_url = request.GET.get('next') or request.POST.get('next')
+
     if request.method == 'POST':
         form = OrganizationForm(request.POST)
         if form.is_valid():
             org = form.save()
             messages.success(request, f'Organization "{org.name}" added.')
+            if next_url:
+                return redirect(next_url)
             return redirect(org.get_absolute_url())
     else:
         form = OrganizationForm()
@@ -25,6 +29,7 @@ def organization_add(request):
         'organizations/organization_form.html',
         {
             'form': form,
-            'mode': 'add'
+            'mode': 'add',
+            'next': next_url,
         }
     )

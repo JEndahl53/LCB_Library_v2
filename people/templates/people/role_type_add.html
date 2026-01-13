@@ -1,0 +1,15 @@
+<!-- people/templates/people/role_type_add.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Add Role Type</h1>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <button type="submit">Create</button>
+  <a href="{% url 'people:role_type_list' %}">Cancel</a>
+</form>
+{% endblock %}

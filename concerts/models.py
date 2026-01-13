@@ -25,11 +25,43 @@ class Concert(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ['-date']
+
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('concert_detail', args=[self.pk])
+        return reverse('concerts:concert_detail', args=[self.pk])
+
+    def roles_by_type(self):
+        """
+        Returns concert roles grouped by role type (similar to Music.roles_by_type)
+        Example:
+        {
+            "Conductor": [Person, Person],
+            "Soloist": [Person],
+        }
+        """
+        from collections import OrderedDict
+
+        roles = (
+            self.roles
+            .select_related("role_type", "person")
+            .order_by(
+                "role_type__display_order",
+                "display_order",
+                "person__last_name"
+            )
+        )
+
+        grouped = OrderedDict()
+
+        for role in roles:
+            role_type = role.role_type
+            grouped.setdefault(role_type, []).append(role.person)
+
+        return grouped
 
 
 class ConcertRole(models.Model):

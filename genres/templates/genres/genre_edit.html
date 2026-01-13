@@ -1,0 +1,16 @@
+<!-- genres/tempates/genres/genre_edit.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Edit Genre</h1>
+<p><strong>{{ genre.name }}</strong></p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+
+  <button type="submit">Save</button>
+  <a href="{% url 'genres:genre_list' %}">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,17 @@
+<!-- music/templates/music/music_add.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>
+  Add Music
+</h1>
+
+{% include "music/_music_form.html" %}
+
+<nav>
+  <a href="{% url 'music:music_list' %}">Cancel</a>
+</nav>
+
+{% endblock %}
