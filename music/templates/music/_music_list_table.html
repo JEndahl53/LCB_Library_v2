@@ -1,0 +1,106 @@
+<!-- music/templates/music/_music_list_table.html -->
+
+{% if music_list %}
+  <table class="music_table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Attribution</th>
+        <th>Genres</th>
+        <th>Location</th>
+        <th>Status</th>
+        <th>Duration</th>
+        <th>Flags</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for music in music_list %}
+        <tr>
+          <td>
+            <a href="{% url 'music:music_detail' music.pk %}">
+              {{ music.title }}
+            </a>
+          </td>
+
+          <td>
+            <div class="attribution">
+              {% for role in music.roles.all %}
+                <span class="role-group">
+                  <span class="role-name">
+                    {% if role.role_type.name|lower == 'composer' %}by:
+                    {% elif role.role_type.name|lower == 'arranger' %}arr.:
+                    {% else %}{{ role.role_type.name|lower }}{% endif %}
+                  </span>
+                  {{ role.person.display_name }}
+                </span>
+                {% if not forloop.last %} . {% endif %}
+              {% empty %}
+                -
+              {% endfor %}
+            </div>
+          </td>
+
+          <td>
+            {% for genre in music.genres.all %}
+              {{ genre.name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}
+              --
+            {% endfor %}
+          </td>
+
+          <td>
+            {% if music.location_drawer %}
+              D{{ music.location_drawer }} - {{ music.location_number }}
+            {% else %}
+              --
+            {% endif %}
+          </td>
+
+          <td>
+            {% with badge=music.get_availablity_badge %}
+              {% if badge %}
+                <span class="badge badge-availability">
+                  {{ badge }}
+                </span>
+              {% else %}
+                 -
+              {% endif %}
+            {% endwith %}
+          </td>
+
+          <td>
+            {{ music.get_duration_display }}
+          </td>
+
+          <td>
+            {% if music.score_missing %}
+              <span class="flag flag-warning">Score missing</span>
+            {% endif %}
+            {% if music.needs_review %}
+              <span class="flag flag-review">Needs review</span>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+ <!-- Pagination Controls -->
+  <nav class="pagination" hx-target="#music-table-container" hx-push-url="true">
+    <p>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+
+    <div class="pagination-links">
+      {% if page_obj.has_previous %}
+        <a href="?page=1&q={{ q|default:'' }}&genre={{ selected_genre|default:'' }}&score_missing={{ score_missing|default:'' }}&needs_review={{ needs_review|default:'' }}" hx-get="?page=1&q={{ q|default:'' }}&genre={{ selected_genre|default:'' }}&score_missing={{ score_missing|default:'' }}&needs_review={{ needs_review|default:'' }}">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}&q={{ q|default:'' }}&genre={{ selected_genre|default:'' }}&score_missing={{ score_missing|default:'' }}&needs_review={{ needs_review|default:'' }}" hx-get="?page={{ page_obj.previous_page_number }}&q={{ q|default:'' }}&genre={{ selected_genre|default:'' }}&score_missing={{ score_missing|default:'' }}&needs_review={{ needs_review|default:'' }}">Previous</a>
+      {% endif %}
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&q={{ q|default:'' }}&genre={{ selected_genre|default:'' }}&score_missing={{ score_missing|default:'' }}&needs_review={{ needs_review|default:'' }}" hx-get="?page={{ page_obj.next_page_number }}&q={{ q|default:'' }}&genre={{ selected_genre|default:'' }}&score_missing={{ score_missing|default:'' }}&needs_review={{ needs_review|default:'' }}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}&q={{ q|default:'' }}&genre={{ selected_genre|default:'' }}&score_missing={{ score_missing|default:'' }}&needs_review={{ needs_review|default:'' }}" hx-get="?page={{ page_obj.paginator.num_pages }}&q={{ q|default:'' }}&genre={{ selected_genre|default:'' }}&score_missing={{ score_missing|default:'' }}&needs_review={{ needs_review|default:'' }}">Last</a>
+      {% endif %}
+    </div>
+  </nav>
+{% else %}
+  <p>No music matches your criteria.</p>
+{% endif %}

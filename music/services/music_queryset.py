@@ -53,4 +53,5 @@ def get_music_list_queryset(
         "genres",
         "roles__person",
         'roles__role_type',
+        "organization_links__role_type",
     )

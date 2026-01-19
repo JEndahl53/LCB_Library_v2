@@ -39,7 +39,8 @@ def music_list(request):
     page_obj = paginator.get_page(page_number)
 
     context = {
-        "music_list": music_qs,
+        "page_obj": page_obj,
+        "music_list": page_obj.object_list,
         "genres": Genre.objects.filter(is_active=True),
         "q": q,
         "selected_genre": selected_genre_id,
