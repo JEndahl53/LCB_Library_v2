@@ -1,3 +1,4 @@
+# core/urls.py
 """
 URL configuration for core project.
 
@@ -16,8 +17,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from core.views import home
 
 urlpatterns = [
+    path('', home, name='home'),
+    path('accounts/', include ('django.contrib.auth.urls')),
+    path('admin/', admin.site.urls),
     path('admin/', admin.site.urls),
     path('people/', include('people.urls')),
     path('organizations/', include('organizations.urls')),

@@ -13,10 +13,18 @@
   <tbody>
     {% for person in people %}
       <tr>
-        <td>{{ person.last_name }}</td>
-        <td>{{ person.first_name }}</td>
         <td>
-          <a href="{% url 'person_detail' person.id %}">
+          {% if person.last_name %}
+            <a href="{% url 'people:person_detail' person.id %}">{{ person.last_name }}</a>
+          {% endif %}
+        </td>
+        <td>
+          {% if person.first_name %}
+            <a href="{% url 'people:person_detail' person.id %}">{{ person.first_name }}</a>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'people:person_detail' person.id %}">
             {% if person.display_name %}
               {{ person.display_name }}
             {% else %}
@@ -36,26 +44,26 @@
   </tbody>
 </table>
 
-<nav>
+<nav hx-target="#person-table" hx-push-url="true" hx-get="{% url 'people:person_list' %}">
   <span>
     Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
   </span>
 
   <div>
     {% if page_obj.has_previous %}
-      <a href="?page=1&active={{ filters.active }}&type={{filters.type}}&review={{ filters.review }}">
+      <a href="?page=1&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
         First
       </a>
-      <a href="?page={{ page_obj.previous_page_number }}&active={{ filters.active }}&type={{filters.type}}&review={{ filters.review }}">
+      <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
         Previous
       </a>
     {% endif %}
 
     {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}&active={{ filters.active }}&type={{filters.type}}&review={{ filters.review }}">
+      <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
         Next
       </a>
-      <a href="?page={{ page_obj.paginator.num_pages }}&active={{ filters.active }}&type={{filters.type}}&review={{ filters.review }}">
+      <a href="?page={{ page_obj.paginator.num_pages }}&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
         Last
       </a>
     {% endif %}

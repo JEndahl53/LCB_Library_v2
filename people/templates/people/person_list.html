@@ -18,7 +18,7 @@
       name="q"
       placeholder="Search people..."
       value="{{ request.GET.q|default:'' }}"
-      hx-get="{% url 'person_list' %}"
+      hx-get="{% url 'people:person_list' %}"
       hx-trigger="keyup changed delay:300ms"
       hx-target="#person-table"
       hx-push-url="true"
@@ -65,7 +65,7 @@
   </fieldset>
 </form>
 
-<a href="{% url 'person_add' %}">Add person</a>
+<a href="{% url 'people:person_add' %}">Add person</a>
 
 <div id="person-table">
   {% include "people/_person_table.html" %}

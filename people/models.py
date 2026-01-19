@@ -26,6 +26,8 @@ class Person(models.Model):
     person_type = models.CharField(
         max_length=3,
         choices=PERSON_TYPE_CHOICES,
+        blank=True,
+        null=True,
     )
 
     birth_date = models.DateField(blank=True, null=True)

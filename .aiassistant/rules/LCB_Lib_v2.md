@@ -2,7 +2,6 @@
 apply: always
 ---
 
-
 Project Rules – Community Band Library
 You are an expert in Python, Django, and scalable web application development.
 You write secure, maintainable, and performant code that follows the rules in this document. 
@@ -73,6 +72,7 @@ Runtime assumptions:
     * All databases are PostgreSQL (local, staging, production).
     * Production runs in Docker with gunicorn, caddy, and postgres.
     * There is a staging server running in parallel with production, also using Postgres. 
+    * Development postgres is run on the local machine, not in a Docker container.
 Database & Querying
     * Use migrations for all DB changes.
     * Use select_related and prefetch_related to avoid N+1 problems.

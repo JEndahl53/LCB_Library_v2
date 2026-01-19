@@ -14,7 +14,7 @@
 <form method="post">
   {% csrf_token %}
   <button type="submit">Yes, reactivate</button>
-  <a href="{% url 'person_detail' person.pk %}" class="btn btn-secondary">Cancel</a>
+  <a href="{% url 'people:person_detail' person.pk %}" class="btn btn-secondary">Cancel</a>
 </form>
 
 {% endblock %}

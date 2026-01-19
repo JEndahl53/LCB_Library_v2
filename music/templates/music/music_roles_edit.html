@@ -30,7 +30,7 @@
       {% endfor %}
     </ul>
   {% else %}
-    <p>No people assigned.</p>
+    <p>No people are assigned.</p>
   {% endif %}
 </section>
 
@@ -45,9 +45,30 @@
     {{ form.non_field_errors }}
 
     <div>
-      {{ form.person.label_tag }}
-      {{ form.person }}
-      {{ form.person.errors }}
+      <label for="person-search">Person</label>
+
+      <input
+        type="text"
+        id="person-search"
+        name="q"
+        placeholder="Search by name..."
+        hx-get="{% url 'people:person_hx_search' %}"
+        hx-trigger="keyup delay:300ms"
+        hx-target="#person-search-results"
+        hx-indicator="#person-search-loading"
+        />
+      <div class="live-search">
+        <div id="person-search-loading" class="htmx-indicator">
+         Searching...
+        </div>
+        <div id="person-search-results"></div>
+      </div>
+      <input type="hidden" name="person" id="id_person" />
+
+      <p>
+        Selected:
+        <strong id="person-display">None</strong>
+      </p>
     </div>
 
     <div>

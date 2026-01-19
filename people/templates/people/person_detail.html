@@ -8,8 +8,8 @@
 {% block content %}
 
 <nav class="actions">
-  <a href="{% url 'person_edit' person.pk %}">Edit this person</a>
-  <a href="{% url 'person_list' %}">Back to Person List</a>
+  <a href="{% url 'people:person_edit' person.pk %}">Edit this person</a>
+  <a href="{% url 'people:person_list' %}">Back to Person List</a>
 </nav>
 
 <h1>

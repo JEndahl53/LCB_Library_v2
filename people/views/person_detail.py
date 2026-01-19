@@ -1,16 +1,16 @@
 # people/views/person_detail.py
 
-from django.contrib.auth.decorators import login_required, user_passes_test
+# from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render, get_object_or_404
 from people.models import Person
 
 
-def is_staff_user(user):
-    return user.is_authenticated and user.is_staff
-
-
-@login_required
-@user_passes_test(is_staff_user)
+# def is_staff_user(user):
+#     return user.is_authenticated and user.is_staff
+#
+#
+# @login_required
+# @user_passes_test(is_staff_user)
 def person_detail(request, pk):
     person = get_object_or_404(Person, pk=pk)
 

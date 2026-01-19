@@ -1,0 +1,36 @@
+<!-- core/templates/core/home.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Lansing Concert Band Library</h1>
+
+    <p>Welcome to the LCB Library project.</p>
+
+<nav>
+  <ul>
+    <li>
+      <a href="{% url 'concerts:concert_list' %}">View Concerts</a>
+    </li>
+    <li>
+      <a href="{% url 'music:music_list' %}">Browse the Library</a>
+    </li>
+  </ul>
+</nav>
+
+<hr>
+
+{% if user.is_authenticated %}
+  <p>Welcome, {{ user.username }}!
+    <form method="post" action="{% url 'logout' %}">
+      {% csrf_token %}
+      <button type="submit">Logout</button>
+    </form>
+  </p>
+{% else %}
+  <p>
+    <a href="{% url 'login' %}">Log in</a>
+  </p>
+{% endif %}
+
+{% endblock %}

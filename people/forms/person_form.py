@@ -12,7 +12,7 @@ class PersonForm(forms.ModelForm):
             'first_name',
             'last_name',
             'display_name',
-            'person_type',
+            # 'person_type',  # Removed due to confusing UI issues when editing a person
             'birth_date',
             'death_date',
             'is_active',

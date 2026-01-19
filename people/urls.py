@@ -11,6 +11,7 @@ from people.views.role_type_list import role_type_list
 from people.views.role_type_add import role_type_add
 from people.views.role_type_edit import role_type_edit
 from people.views.role_type_delete import role_type_delete
+from people.views import person_hx
 
 app_name = "people"
 
@@ -25,4 +26,9 @@ urlpatterns = [
     path('role-types/add/', role_type_add, name='role_type_add'),
     path('role-types/<int:pk>/edit/', role_type_edit, name='role_type_edit'),
     path('role-types/<int:pk>/delete/', role_type_delete, name='role_type_delete'),
+    path(
+        "hx/search/",
+        person_hx.person_hx_search,
+        name="person_hx_search",
+    ),
 ]

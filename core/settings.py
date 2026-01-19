@@ -42,14 +42,20 @@ INSTALLED_APPS = [
     # local
     'people.apps.PeopleConfig',
     'accounts.apps.AccountsConfig',
+    'core',
     'venues',
     'music',
     'concerts',
     'organizations',
     'genres',
     'migration_tools',
+    # 3rd party
+    "tailwind",
+    "theme",
 
 ]
+
+TAILWIND_APP_NAME = "theme"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -141,3 +147,5 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
+
+

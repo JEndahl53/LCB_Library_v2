@@ -1,0 +1,20 @@
+<!-- people/templates/people/_person_search_results.html -->
+<ul class="search-results">
+
+
+  {% for person in people %}
+    <li>
+      <button
+        type="button"
+        hx-on:click="
+          document.getElementById('id_person').value='{{ person.id }}';
+          document.getElementById('person-display').innerText='{{ person.display_name|default:person }}';
+        "
+      >
+        {{ person.display_name|default:person }}
+      </button>
+    </li>
+  {% empty %}
+    <li class="muted">There are no matches.</li>
+  {% endfor %}
+</ul>
