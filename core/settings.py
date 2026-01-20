@@ -52,14 +52,16 @@ INSTALLED_APPS = [
     # 3rd party
     "tailwind",
     "theme",
+    "django_browser_reload",
 
 ]
 
 TAILWIND_APP_NAME = "theme"
+INTERNAL_IPS = ["127.0.0.1"]  # Required for django-browser-reload
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
