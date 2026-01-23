@@ -10,6 +10,13 @@ from concerts.views.concert_program_edit import concert_program_edit
 from concerts.views.concert_program_delete import concert_program_delete
 from concerts.views.concert_roles_edit import concert_roles_edit
 from concerts.views.concert_role_delete import concert_role_delete
+from concerts.views.concert_people_hx import (
+    concert_people_add_hx,
+    concert_people_panel_hx,
+    concert_people_remove_hx,
+    concert_people_role_section_hx,
+    concert_people_search_hx,
+)
 
 app_name = "concerts"
 
@@ -27,4 +34,27 @@ urlpatterns = [
     # Role management
     path('<int:pk>/roles/', concert_roles_edit, name='concert_roles_edit'),
     path('<int:concert_pk>/roles/<int:role_pk>/delete/', concert_role_delete, name='concert_role_delete'),
+
+    # HTMX: People & Roles on concert_edit
+    path("<int:pk>/hx/people/", concert_people_add_hx, name="concert_people_panel_hx"),
+    path(
+        "<int:pk>/hx/people/<int:role_type_id>/",
+        concert_people_role_section_hx,
+        name="concert_people_role_section_hx",
+    ),
+    path(
+        "<int:pk>/hx/people/<int:role_type_id>/search/",
+        concert_people_search_hx,
+        name="concert_people_search_hx",
+    ),
+    path(
+        "<int:pk>/hx/people/<int:role_type_id>/add/",
+        concert_people_add_hx,
+        name="concert_people_add_hx",
+    ),
+    path(
+        "<int:pk>/hx/people/<int:role_type_id>/remove/",
+        concert_people_remove_hx,
+        name="concert_people_remove_hx",
+    ),
 ]

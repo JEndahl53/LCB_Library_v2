@@ -1,0 +1,91 @@
+<!-- concerts/templates/concerts/_concert_people_role_section.html -->
+
+<section id="role-section-{{ role_type_id }}" class="bg-base-100 border border-base-200 rounded-box p-4">
+  <div class="flex items-center justify-between gap-4">
+    <h3 class="font-bold text-lg">{{ role_type.name }}</h3>
+
+    <button
+      type="button"
+      class="btn btn-xs btn-outline btn-primary"
+      hx-get="{% url 'people:person_add_hx' %}?concert_id={{ concert.pk }}&role_type_id={{ role_type_id }}"
+      hx-target="#person-form-target"
+      hx-on::after-swap="person_modal.showModal()"
+    >
+      + Add Person
+    </button>
+  </div>
+
+  <div class="mt-3 space-y-3">
+    <!-- Current assignments -->
+    {% if roles %}
+      <ul class="space-y-1">
+        {% for role in roles %}
+          <li class="flex items-center justify-between gap-3">
+            <span>{{ role.person }}</span>
+
+            <button
+              type="button"
+              class="btn btn-xs btn-outline"
+              hx-post="{% url 'concert:concert_people_remove-hx' concert.pk role_type_id %}"
+              hx-target="#role-section-{{ role_type_id }}"
+              hx-swap="outerHTML"
+              hx-include="[name='csrfmiddlewaretoken']"
+              hx-vals='{"role_id": "{{ role.id }}"}'
+              >
+              Remove
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+  {% else %}
+    <div class="text-sm opacity-70">No one assigned.</div>
+  {% endif %}
+
+  <!-- Historical dropdown (poeple who have had this role before) -->
+  <div class="flex flex-col md:flex-row gap-2 md:items-end">
+    <div class="form-control w-full">
+      <label class="label"><span class="label-text font-semibold">Pick from past {{ role_type.name }}</span></label>
+      <select class="select select-bordered w-full" name="historical_person_id" id="historical-person-{{ role_type.id }}">
+        <option value="">Select a person...</option>
+        {% for p in historical_people %}
+          <option value="{{ p.id }}">{{ p }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-primary"
+      hx-post="{% url 'concerts:concert_people_add_hx' concert.pk role_type.id %}"
+      hx-target="#role-section-{{ role_type_id }}"
+      hx-swap="outerHTML"
+      hx-include="[name='csrfmiddlewaretoken'], #historical-person-{{ role_type.id }}"
+      hx-vals='js:{"person_id": document.getElementById("historical-person-{{ role_type.id }}").value}'
+      >
+      Add
+    </button>
+  </div>
+
+  <!-- Live serach -->
+  <div class="form-control w-full">
+    <label class="label"><span class="label-text font-semibold">Search</span></label>
+    <input
+      type="text"
+      name="q"
+      class="input niput-bordered w-full"
+      placeholder="Type a name..."
+      hx-get="{% url 'concerts:concert_people_search_hx' concert.pk role_type.id %}"
+      hx-trigger="keyup changed delay:250ms"
+      hx-target="#search-results-{{ role_type.id }}"
+      hx-swap="innerHTML"
+      >
+    <div id="search-results-{{ role_type.id }}" class="mt-2"></div>
+  </div>
+  </div>
+
+  {% if close_modal %}
+    <script>
+      if (window.person_modal) { person_modal.close(); }
+    </script>
+  {% endif %}
+</section>

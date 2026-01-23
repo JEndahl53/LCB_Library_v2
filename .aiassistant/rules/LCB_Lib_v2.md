@@ -9,7 +9,7 @@ When working on this project:
     * Prefer explaining options and tradeoffs before making changes.
     * Propose changes as patches/diffs and ask for confirmation before applying them.
     * Follow the project's existing patterns and libraries unless explicitly asked to change them. 
-    * When providing code suggestions, include the filepath.
+    * When providing code example or edits, ALWAYS include the filepath.
 Python
     * Follow PEP 8 with a 120-character line limit.
     * Use double quotes for Python strings.

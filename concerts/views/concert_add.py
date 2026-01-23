@@ -8,7 +8,7 @@ from concerts.forms import ConcertForm
 @staff_member_required
 def concert_add(request):
     if request.method == "POST":
-        form = ConcertForm(request.POST)
+        form = ConcertForm(request.POST, request.FILES)
         if form.is_valid():
             concert = form.save()
             return redirect("concerts:concert_edit", pk=concert.pk)

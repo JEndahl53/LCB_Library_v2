@@ -39,6 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    # Django allauth things
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     # local
     'people.apps.PeopleConfig',
     'accounts.apps.AccountsConfig',
@@ -53,6 +58,7 @@ INSTALLED_APPS = [
     "tailwind",
     "theme",
     "django_browser_reload",
+    "widget_tweaks",
 
 ]
 
@@ -61,15 +67,23 @@ INTERNAL_IPS = ["127.0.0.1"]  # Required for django-browser-reload
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Ensure these are False for local development
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
+
 ROOT_URLCONF = 'core.urls'
+
+SITE_ID = 1
 
 TEMPLATES = [
     {
@@ -111,7 +125,22 @@ DATABASES = {
 AUTH_USER_MODEL = "accounts.CustomUser"
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+# allauth account settings  # deprecated in Django 5+
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+# ACCOUNT_USERNAME_REQUIRED = False  # deprecated in Django 5+
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+# ACCOUNT_SIGNUP_FORM_CLASS = 'accounts.forms.MemberSignupForm'
+# ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True  # deprecated in Django 5+
+# ACCOUNT_LOGOUT_REDIRECT_URL = 'home'
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -145,9 +174,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
-
-

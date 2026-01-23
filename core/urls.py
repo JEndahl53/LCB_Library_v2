@@ -18,10 +18,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from core.views import home
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', home, name='home'),
-    path('accounts/', include ('django.contrib.auth.urls')),
+    path('accounts/', include ('allauth.urls')),
+    path('accounts/', include('accounts.urls')),  # Added for my custom profile page.
     path('admin/', admin.site.urls),
     path('people/', include('people.urls')),
     path('organizations/', include('organizations.urls')),
@@ -30,3 +33,9 @@ urlpatterns = [
     path('venues/', include('venues.urls')),
     path('concerts/', include('concerts.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
+    )

@@ -1,0 +1,16 @@
+<!-- concerts/templates/concerts/_concert_people_panel.html -->
+
+<div class="space-y-6">
+  {% for role_type in role_types %}
+    <section
+      id="role-section-{{ role_type.id }}"
+      class="bg-base-100 border border-base-200 rounded-box p-4"
+      hx-get="{% url 'concerts:concert_people_role_section_hx' concert.pk role_type.id %}"
+      hx-trigger="load"
+      hx-target="this"
+      hx-swap="outerHTML"
+      >
+      <div class="opacity-70 text-sm">Loading {{ role_type.name }}...</div>
+    </section>
+  {% endfor %}
+</div>

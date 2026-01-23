@@ -27,6 +27,42 @@
 
 <hr>
 
+
+<!-- ==================== -->
+<!-- People & Roles       -->
+<!-- ==================== -->
+<section>
+  <h2>People & Roles</h2>
+
+  <div
+    id="concert-people-panel"
+    hx-get="{% url 'concerts:concert_people_panel_hx' concert.pk %}"
+    hx-trigger="load"
+    hx-target="this"
+    hx-swap="innerHTML"
+  >
+    <p class="opacity-70">Loading people & roles...</p>
+  </div>
+</section>
+
+<!-- Person Creation Modal -->
+<dialog id="person_modal" class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Add New Person</h3>
+    <div id="person-form-target">
+      <p class="py-4 text-sm opacity-70">Loading person form...</p>
+    </div>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn">Close</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<hr>
+
+
 <!-- ==================== -->
 <!-- Program              -->
 <!-- ==================== -->
@@ -51,34 +87,6 @@
   <p>
     <a href="{% url 'concerts:concert_program_edit' concert.pk %}">
       Add / change program items
-    </a>
-  </p>
-</section>
-
-<hr>
-
-<!-- ==================== -->
-<!-- People & Roles       -->
-<!-- ==================== -->
-<section>
-  <h2>People & Roles</h2>
-
-  {% if concert.roles.exists %}
-    <ul>
-      {% for role in concert.roles.all %}
-        <li>
-          <strong>{{ role.role_type.name }}:</strong>
-          {{ role.person }}
-        </li>
-      {% endfor %}
-    </ul>
-  {% else %}
-    <p>No people are currently associated with this concert.</p>
-  {% endif %}
-
-  <p>
-    <a href="{% url "concerts:concert_roles_edit" concert.pk %}">
-      Add / remove people & roles
     </a>
   </p>
 </section>

@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Concert, ConcertRole, ConcertProgram
+from .models import Concert, ConcertRole, ConcertProgram, ConcertAudio
 from people.models import PersonRoleType
 
 
@@ -39,3 +39,21 @@ class ConcertAdmin(admin.ModelAdmin):
     ordering = ('-date',)
 
     inlines = [ConcertRoleInline, ConcertProgramInline]
+
+
+class ConcertAudioInline(admin.TabularInline):
+    model = ConcertAudio
+    extra = 0
+
+
+@admin.register(ConcertAudio)
+class ConcertProgramAdmin(admin.ModelAdmin):
+    list_display = ["get_concert_date", "get_program_order"]
+
+    def get_concert_date(self, obj):
+        return obj.porgram_entry.concert.date
+    get_concert_date.short_description = "Concert Date"
+
+    def get_program_order(self, obj):
+        return obj.program_entry.program_order
+    get_program_order.short_description = "Program Order"

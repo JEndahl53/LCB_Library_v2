@@ -1,0 +1,56 @@
+<!-- people/templates/people/_person_form_inline.html -->
+
+<div class="space-y-4">
+  {% csrf_token %}
+  <input type="hidden" name="concert_id" value="{{ concert.pk }}">
+  <input type="hidden" name="role_type_id" value="{{ role_type.id }}">
+
+  <div class="form-control w-full">
+    <label class="label"><span class="label-text font-bold">First name (optional)</span></label>
+    {{ form.first_name }}
+    {% if form.first_name.errors %}
+      <label class="label"><span class="label-text-alt text-error">{{ form.first_name.errors.0 }}</span></label>
+    {% endif %}
+  </div>
+
+  <div class="form-control w-full">
+    <label class="label"><span class="label-text font-bold">Last name / Ensemble name</span></label>
+    {{ form.last_name }}
+    {% if form.last_name.errors %}
+      <label class="label"><span class="label-text-alt text-error">{{ form.last_name.errors.0 }}</span></label>
+    {% endif %}
+    <p class="text-xs opacity-70 mt-1">{{ form.last_name.help_text }}</p>
+  </div>
+
+  <div class="form-control w-full">
+    <label class="label"><span class="label-text font-bold">Full / Professional name (optional)</span></label>
+    {{ form.display_name }}
+    <p class="text-xs opacity-70 mt-1">{{ form.display_name.help_text }}</p>
+    {% if form.display_name.errors %}
+      <label class="label"><span class="label-text-alt text-error">{{ form.display_name.errors.0 }}</span></label>
+    {% endif %}
+  </div>
+
+  <div class="form-control w-full">
+    <label class="label"><span class="label-text font-bold">Type</span></label>
+    {{ form.person_type }}
+    {% if form.person_type.errors %}
+      <label class="label"><span class="label-text-alt text-error">{{ form.person_type.errors.0 }}</span></label>
+    {% endif %}
+  </div>
+
+  <p class="text-xs opacity-70">This person will be flagged for librarian review.</p>
+
+  <div class="mt-6 flex justify-end gap-2">
+    <button
+      type="button"
+      class="btn btn-primary"
+      hx-post="{% url 'people:person_add_hx' %}"
+      hx-target="#role-section-{{ role_type.id }}"
+      hx-swap="outerHTML"
+      hx-include="[name='first_name'], [name='last_name'], [name='display_name'], [name='person_type'], [name='concert_id'], [name='role_type_id], [name='csrfmiddlewaretoken']"
+      >
+        Save Person
+    </button>
+  </div>
+</div>

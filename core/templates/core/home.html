@@ -20,16 +20,17 @@
 
 <hr>
 
+  <!-- login and logout are handled by allauth, so account_xxx is the url -->
 {% if user.is_authenticated %}
   <p>Welcome, {{ user.username }}!
-    <form method="post" action="{% url 'logout' %}">
+    <form method="post" action="{% url 'account_logout' %}">
       {% csrf_token %}
       <button type="submit">Logout</button>
     </form>
   </p>
 {% else %}
   <p>
-    <a href="{% url 'login' %}">Log in</a>
+    <a href="{% url 'account_login' %}">Log in</a>
   </p>
 {% endif %}
 

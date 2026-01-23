@@ -24,16 +24,73 @@
 
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50">
-<header class="h-15 bg-gray-700 text-blue-100 shadow-md">
-  <nav class="flex justify-between items-center align-center px-4">
-    <!-- Logo goes here -->
-    <a href="{% url 'home' %}">Home</a>
-    <a href = "{% url 'music:music_list' %}">Library</a>
-    <a href = "{% url 'concerts:concert_list' %}">Concerts</a>
-    <a href = "{% url 'people:person_list' %}">Persons</a>
-    {% if user.is_staff %}
-      <p>Add an Admin panel/dropdown here</p>
-    {% endif %}
+<header class="bg-cyan-700 shadow-md">
+  <nav class="navbar container mx-auto">
+  <!-- Navbar Start: Logo and Mobile Menu (DaisyUI construct) -->
+    <div class="navbar-start">
+      <div class="dropdown">
+        <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/>
+          </svg>
+        </div>
+        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+          <li><a href="{% url 'home' %}">Home</a></li>
+          <li><a href="{% url 'music:music_list' %}">Library</a></li>
+          <li><a href="{% url 'concerts:concert_list' %}">Concerts</a></li>
+          <li><a href="{% url 'people:person_list' %}">Persons</a></li>
+        </ul>
+      </div>
+      <a href="{% url 'home' %}" class="flex items-center gap-3">
+        <img
+          src="{% static 'branding/LCB_Bell_profile_picture.jpg' %}"
+          alt="LCB Library Logo"
+          class="h-8 w-auto"
+          >
+        <span class="text-lg font-semibold sm:inline">
+          LCB Library
+        </span>
+      </a>
+    </div>
+
+  <!-- Navbar Center: Desktop Links (DaisyUI construct) -->
+    <div class="navbar-center hidden lg:flex">
+      <ul class="menu menu-horizontal px-1">
+        <li><a href="{% url 'home' %}">Home</a></li>
+        <li><a href="{% url 'music:music_list' %}">Library</a></li>
+        <li><a href="{% url 'concerts:concert_list' %}">Concerts</a></li>
+        <li><a href="{% url 'people:person_list' %}">Persons</a></li>
+      </ul>
+    </div>
+
+    <!-- Navbar End: Admin/User Profile (DaisyUI Construct) -->
+    <div class="navbar-end gap-2">
+      {% if user.is_authenticated %}
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar border border-gray-200">
+            <div class="w-10 rounded-full flex items-center justify-center bg-blue-100 text-blue-700">
+              <span class="text-xs font-bold">{{ user.email|slice:":1"|upper }}</span>
+            </div>
+          </div>
+          <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+            <li class="menu-title px-4 py-2 opacity-50">{{ user.email }}</li>
+            <li><a href="{% url 'accounts:profile' %}">Profile</a></li>
+            <div class="divider my-0"></div>
+            <li>
+              <form method="post" action="{% url 'account_logout' %}" class="w-full">
+                {% csrf_token %}
+                <button type="submit" class="w-full text-left">Log Out</button>
+              </form>
+            </li>
+          </ul>
+        </div>
+        {% else %}
+          <div class="flex items-center gap-2">
+          <a href="{% url 'account_login' %}" class="btn btn-ghost btn-sm">Log In</a>
+            <a href="{% url 'account_signup' %}" class="btn btn-sm">Sign Up</a>
+          </div>
+      {% endif %}
+    </div>
   </nav>
 </header>
 {% if messages %}

@@ -3,6 +3,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse
 from venues.models import Venue
+from collections import OrderedDict
+
 
 # Create your models here.
 
@@ -19,7 +21,7 @@ class Concert(models.Model):
         related_name='concerts',
     )
 
-    poster = models.ImageField(upload_to='posters/', blank=True)
+    poster = models.ImageField(upload_to='public/posters/concerts/%Y/', blank=True, null=True,)
     description = models.TextField(blank=True)
 
     date_added = models.DateTimeField(auto_now_add=True)
@@ -43,7 +45,6 @@ class Concert(models.Model):
             "Soloist": [Person],
         }
         """
-        from collections import OrderedDict
 
         roles = (
             self.roles
@@ -141,3 +142,24 @@ class ConcertProgram(models.Model):
 
     def __str__(self):
         return f"{self.concert} - #{self.program_order}: {self.music}"
+
+
+class ConcertAudio(models.Model):
+    program_entry = models.ForeignKey(
+        'concerts.ConcertProgram',
+        on_delete=models.CASCADE,
+        related_name='recordings',
+    )
+    title = models.CharField(max_length=200, help_text="Optional override (defaults to piece title)", blank=True)
+    audio_file = models.FileField(
+        upload_to='restricted/audio/concerts/%Y/'
+    )
+    date_added = models.DateTimeField(auto_now_add=True)
+    date_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = [
+            "program_entry__concert__date",
+            "program_entry__program_order",
+            "id",
+        ]

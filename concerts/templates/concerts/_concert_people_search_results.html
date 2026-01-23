@@ -1,0 +1,22 @@
+<!-- concerts/templates/concerts/_concert_people_search_results.html -->
+
+{%  if people %}
+  <ul class="menu bg-base-100 border border-base-200 rounded-box">
+    {% for p in people %}
+      <li>
+        <button
+          type="button"
+          hx-post="{% url 'concerts:concert_people_add_hx' concert.pk role_type.id %}"
+          hx-target="#role-section-{{ role_type.id }}"
+          hx-swap="outerHTML"
+          hx-include="[name='csrfmiddlewaretoken']"
+          hx-vals='{"person_id": "{{ p.id }}"}'
+          >
+          {{ p }}
+        </button>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="text-sm opacity-70">No matches.</div>
+{% endif %}

@@ -15,11 +15,15 @@ class ConcertForm(forms.ModelForm):
             'date',
             'venue',
             'description',
+            "poster"
         ]
 
         widgets = {
-            'date': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
-            'description': forms.Textarea(attrs={'rows': 4}),
+            'date': forms.DateTimeInput(attrs={'type': 'datetime-local', "class": "input input-bordered w-full"}),
+            "title": forms.TextInput(attrs={"class": "input input-bordered w-full"}),
+            "venue": forms.Select(attrs={"class": "select select-bordered w-full"}),
+            'description': forms.Textarea(attrs={"class": "textarea testarea-bordered w-full",'rows': 4}),
+            "poster": forms.FileInput(attrs={"class": "file-input file-input-bordered w-full"}),
         }
 
     def __init__(self, *args, **kwargs):

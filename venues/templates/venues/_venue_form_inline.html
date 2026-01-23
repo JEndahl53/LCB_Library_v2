@@ -1,0 +1,32 @@
+<!-- venues/templates/venues/_venue_form_inline.html -->
+
+<div class="space-y-4">
+  {% csrf_token %}
+
+  <div class="form-control w-full">
+    <label class="label">
+      <span class="label-text font-bold text-base-content">Venue Name</span>
+    </label>
+    {#  Add the 'input' classes to ensure it's visually distinct and cliakable #}
+    <input type="text"
+           name="name"
+           class="input input-bordered w-full bg-base-100 text-base-content focus:border-primary"
+           placeholder="Enter venue name..."
+           autofocus
+           value="{{ form.name.value|default_if_none:'' }}">
+    {% if form.name.errors %}
+      <label class="label"><span class="label-text-alt text-error">{{ form.name.errors.0 }}</span></label>
+    {% endif %}
+    <p class="text-xs opacity-50 mt-1">This venue will be flagged for librarian review.</p>
+  </div>
+
+  <div class="mt-6 flex justify-end gap-2">
+    <button type="button"
+            class="btn btn-primary"
+            hx-post="{% url 'venues:venue_add_hx' %}"
+            hx-target="#venue-form-target"
+            hx-include="[name='name'], [name='csrfmiddlewaretoken']">
+      Save Venue
+    </button>
+  </div>
+</div>
