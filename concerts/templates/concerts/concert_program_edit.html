@@ -3,83 +3,8 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Edit Program</h1>
-<p><strong>{{ concert.title }}</strong></p>
-
-<hr>
-
-<!-- Existing program items -->
-<section>
-  <h2>Current program</h2>
-
-  {% if program_items %}
-    <ol>
-      {% for item in program_items %}
-        <li>
-          <strong>{{ item.music.title }}</strong>
-          {% if item.notes %}
-            <br><small>{{ item.notes }}</small>
-          {% endif %}
-
-          <form
-            method="POST"
-            action="{% url 'concerts:concert_program_delete' concert.id item.pk %}"
-            style="display: inline"
-            >
-            {% csrf_token %}
-            <button type="submit">Remove</button>
-          </form>
-        </li>
-      {% endfor %}
-    </ol>
-  {% else %}
-    <p>No program items.</p>
-  {% endif %}
+<section class="container mx-auto px-6 py-8">
+  {% include "concerts/_concert_program_modal.html" %}
 </section>
-
-<hr>
-
-<!-- Add program item -->
-<section>
-  <h2>Add music to program</h2>
-
-  <form method="POST">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-
-    <div>
-      {{ form.music.label_tag }}
-      {{ form.music }}
-      {{ form.music.errors }}
-    </div>
-
-    <div>
-      {{ form.program_order.label_tag }}
-      {{ form.program_order }}
-      {{ form.program_order.errors }}
-    </div>
-
-    <div>
-      {{ form.notes.label_tag }}
-      {{ form.notes }}
-      {{ form.notes.errors }}
-    </div>
-
-    <button type="submit">Add to program</button>
-  </form>
-
-  <p>
-    Don't see the music you need?
-    <a href="{% url 'music:music_add' %}?next={{ request.path }}">Add new music</a>
-  </p>
-</section>
-
-<hr>
-
-<nav>
-  <a href="{% url 'concerts:concert_edit' concert.pk %}">
-    Back to concert edit
-  </a>
-</nav>
 
 {% endblock %}

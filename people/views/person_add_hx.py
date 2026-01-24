@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render
+from django.template.loader import render_to_string
 
 from concerts.models import ConcertRole, Concert
 from people.forms.person_form import PersonQuickAddForm
@@ -59,25 +60,36 @@ def person_add_hx(request):
                 defaults={"display_order": 0, "is_active": True},
             )
 
-            # Return the refreshed role section so the modal can close and the list updates.
-            roles = (
-                concert.roles.filter(role_type=role_type)
-                .select_related("person", "role_type")
-                .order_by("display_order", "person__last_name", "person__first_name")
+            panel_html = render_to_string(
+                "concerts/_concert_edit_people_panel.html",
+                {"concert": concert, "swap_oob": True},
+                request=request,
             )
-            historical_people = _historical_people_for_role_type(role_type)[:200]
-
-            return render(
-                request,
-                "concerts/_concert_people_role_section.html",
+            roles = (
+                concert.roles
+                .select_related("person", "role_type")
+                .order_by("role_type__display_order", "display_order", "person__last_name")
+            )
+            roles_by_type = {}
+            for role in roles:
+                roles_by_type.setdefault(role.role_type, []).append(role)
+            modal_html = render_to_string(
+                "concerts/_concert_people_modal.html",
                 {
                     "concert": concert,
-                    "role_type": role_type,
-                    "roles": roles,
-                    "historical_people": historical_people,
-                    "close_modal": True,
+                    "role_types": (
+                        PersonRoleType.objects.filter(
+                            is_active=True,
+                            scope__in=[PersonRoleType.RoleScope.CONCERT, PersonRoleType.RoleScope.BOTH],
+                        )
+                        .order_by("display_order", "name")
+                    ),
+                    "roles_by_type": roles_by_type,
+                    "close_person_modal": True,
                 },
+                request=request,
             )
+            return HttpResponse(modal_html + panel_html)
     else:
         form = PersonQuickAddForm()
 

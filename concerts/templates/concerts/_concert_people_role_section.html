@@ -1,13 +1,13 @@
 <!-- concerts/templates/concerts/_concert_people_role_section.html -->
 
-<section id="role-section-{{ role_type_id }}" class="bg-base-100 border border-base-200 rounded-box p-4">
+<section id="role-section-{{ role_type.id }}" class="bg-base-100 border border-base-200 rounded-box p-4">
   <div class="flex items-center justify-between gap-4">
     <h3 class="font-bold text-lg">{{ role_type.name }}</h3>
 
     <button
       type="button"
       class="btn btn-xs btn-outline btn-primary"
-      hx-get="{% url 'people:person_add_hx' %}?concert_id={{ concert.pk }}&role_type_id={{ role_type_id }}"
+      hx-get="{% url 'people:person_add_hx' %}?concert_id={{ concert.pk }}&role_type_id={{ role_type.id }}"
       hx-target="#person-form-target"
       hx-on::after-swap="person_modal.showModal()"
     >
@@ -26,8 +26,8 @@
             <button
               type="button"
               class="btn btn-xs btn-outline"
-              hx-post="{% url 'concert:concert_people_remove-hx' concert.pk role_type_id %}"
-              hx-target="#role-section-{{ role_type_id }}"
+              hx-post="{% url 'concerts:concert_people_remove_hx' concert.pk role_type.id %}"
+              hx-target="#role-section-{{ role_type.id }}"
               hx-swap="outerHTML"
               hx-include="[name='csrfmiddlewaretoken']"
               hx-vals='{"role_id": "{{ role.id }}"}'
@@ -57,7 +57,7 @@
       type="button"
       class="btn btn-primary"
       hx-post="{% url 'concerts:concert_people_add_hx' concert.pk role_type.id %}"
-      hx-target="#role-section-{{ role_type_id }}"
+      hx-target="#role-section-{{ role_type.id }}"
       hx-swap="outerHTML"
       hx-include="[name='csrfmiddlewaretoken'], #historical-person-{{ role_type.id }}"
       hx-vals='js:{"person_id": document.getElementById("historical-person-{{ role_type.id }}").value}'
@@ -72,7 +72,7 @@
     <input
       type="text"
       name="q"
-      class="input niput-bordered w-full"
+      class="input input-bordered w-full"
       placeholder="Type a name..."
       hx-get="{% url 'concerts:concert_people_search_hx' concert.pk role_type.id %}"
       hx-trigger="keyup changed delay:250ms"

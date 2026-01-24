@@ -12,6 +12,9 @@ from music.views.music_role_delete import music_role_delete
 from music.views.music_org_link_add import music_org_link_add
 from music.views.music_org_link_delete import music_org_link_delete
 from music.views.music_genres_assign import music_genres_assign
+from music.views.music_genre_quick_add_hx import music_genre_quick_add_hx
+from music.views.music_person_quick_add_hx import music_person_quick_add_hx
+from music.views.music_org_quick_add_hx import music_org_quick_add_hx
 
 app_name = 'music'
 
@@ -47,6 +50,11 @@ urlpatterns = [
         name="music_org_link_delete",
     ),
     path(
+        "<int:pk>/people/quick-add/",
+        music_person_quick_add_hx,
+        name="music_person_quick_add_hx",
+    ),
+    path(
         "<int:music_pk>/organizations/<int:link_pk>/delete/",
         music_org_link_delete,
         name="music_org_link_delete",
@@ -57,5 +65,15 @@ urlpatterns = [
         "<int:pk>/genres/",
         music_genres_assign,
         name="music_genres_assign",
+    ),
+    path(
+        "<int:pk>/genres/quick-add/",
+        music_genre_quick_add_hx,
+        name="music_genre_quick_add_hx",
+    ),
+    path(
+        "<int:pk>/organizations/quick-add/",
+        music_org_quick_add_hx,
+        name="music_org_quick_add_hx",
     ),
 ]

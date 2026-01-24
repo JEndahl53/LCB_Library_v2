@@ -3,63 +3,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Add organization for: {{ music.title }}</h1>
-
-<form method="POST" novalidate>
-  {% csrf_token %}
-
-  {{ form.non_field_errors }}
-
-  <fieldset>
-    <legend>Organization Relationship</legend>
-
-    <div class="form-row">
-      {{ form.organization.label_tag }}
-      {{ form.organization }}
-      {{ form.organization.errors }}
-    </div>
-
-    <div class="form-row">
-      {{ form.role_type.label_tag }}
-      {{ form.role_type }}
-      {{ form.role_type.errors }}
-    </div>
-
-    <div class="form-row">
-      {{ form.start_date.label_tag }}
-      {{ form.start_date }}
-      {{ form.start_date.errors }}
-    </div>
-
-    <div class="form-row">
-      {{ form.end_date.label_tag }}
-      {{ form.end_date }}
-      {{ form.end_date.errors }}
-    </div>
-
-    <div class="form-row">
-      {{ form.notes.label_tag }}
-      {{ form.notes }}
-      {{ form.notes.errors }}
-    </div>
-  </fieldset>
-
-  <div class="form-actions">
-    <button type="submit">Add organization</button>
-      <a href="{% url 'music:music_edit' music.pk %}">Cancel</a>
-  </div>
-</form>
-
-<p>
-  Don't see the organization you need?
-  <a href="{% url 'organizations:organization_add' %}?next={{ request.path }}">Add a new organization</a>
-</p>
-
-<p>
-  Need a new relationship type?
-  <a href="{% url 'organizations:org_role_type_list' %}">Manage relationship types</a>
-</p>
+<section class="container mx-auto px-6 py-8">
+  {% include "music/_music_orgs_modal.html" %}
+</section>
 
 {% endblock %}
-
 

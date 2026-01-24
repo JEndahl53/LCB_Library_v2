@@ -4,8 +4,9 @@ from __future__ import annotations
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.db.models import Q
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, get_object_or_404
+from django.template.loader import render_to_string
 
 from concerts.models import Concert, ConcertRole
 from people.models import Person, PersonRoleType
@@ -41,19 +42,32 @@ def _historical_people_for_role_type(role_type: PersonRoleType):
         .order_by("last_name", "first_name", "display_name")
     )
 
+def _roles_by_type(concert: Concert):
+    roles = (
+        concert.roles
+        .select_related("person", "role_type")
+        .order_by("role_type__display_order", "display_order", "person__last_name")
+    )
+    grouped = {}
+    for role in roles:
+        grouped.setdefault(role.role_type, []).append(role)
+    return grouped
+
 
 @staff_member_required
 def concert_people_panel_hx(request, pk: int):
     concert= get_object_or_404(Concert, pk=pk)
 
     role_types = list(_concert_role_types_qs())
+    roles_by_type = _roles_by_type(concert)
 
     return render(
         request,
-        "concerts/_concert_people_panel.html",
+        "concerts/_concert_people_modal.html",
         {
             "concert": concert,
             "role_types": role_types,
+            "roles_by_type": roles_by_type,
         },
     )
 
@@ -80,7 +94,7 @@ def concert_people_role_section_hx(request, pk: int, role_type_id: int):
         "concerts/_concert_people_role_section.html",
         {
             "concert": concert,
-            role_type: role_type,
+            "role_type": role_type,
             "roles": roles,
             "historical_people": historical_people,
         },
@@ -146,7 +160,23 @@ def concert_people_add_hx(request, pk: int, role_type_id: int):
         defaults={"display_order": 0, "is_active": True},
     )
 
-    return concert_people_role_section_hx(request, pk=pk, role_type_id=role_type_id)
+    role_types = list(_concert_role_types_qs())
+    roles_by_type = _roles_by_type(concert)
+    modal_html = render_to_string(
+        "concerts/_concert_people_modal.html",
+        {
+            "concert": concert,
+            "role_types": role_types,
+            "roles_by_type": roles_by_type,
+        },
+        request=request,
+    )
+    panel_html = render_to_string(
+        "concerts/_concert_edit_people_panel.html",
+        {"concert": concert, "swap_oob": True},
+        request=request,
+    )
+    return HttpResponse(modal_html + panel_html)
 
 
 @staff_member_required
@@ -168,4 +198,20 @@ def concert_people_remove_hx(request, pk: int, role_type_id: int):
     role = get_object_or_404(ConcertRole, pk=role_id, concert=concert, role_type=role_type)
     role.delete()
 
-    return concert_people_role_section_hx(request, pk=pk, role_type_id=role_type_id)
+    role_types = list(_concert_role_types_qs())
+    roles_by_type = _roles_by_type(concert)
+    modal_html = render_to_string(
+        "concerts/_concert_people_modal.html",
+        {
+            "concert": concert,
+            "role_types": role_types,
+            "roles_by_type": roles_by_type,
+        },
+        request=request,
+    )
+    panel_html = render_to_string(
+        "concerts/_concert_edit_people_panel.html",
+        {"concert": concert, "swap_oob": True},
+        request=request,
+    )
+    return HttpResponse(modal_html + panel_html)

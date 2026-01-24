@@ -1,0 +1,51 @@
+<!-- concerts/templates/concerts/_concert_add_container.html -->
+
+<div id="concert-add-container">
+  {% if concert %}
+    {% include "concerts/_concert_edit_layout.html" %}
+  {% else %}
+    <section class="container mx-auto px-6 py-8">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h1 class="text-3xl font-semibold">Create Concert</h1>
+          <p class="text-sm opacity-70">Save the concert, then add people, venue details, and the program.</p>
+        </div>
+        <a class="btn btn-ghost btn-sm" href="{% url 'concerts:concert_list' %}">Cancel</a>
+      </div>
+
+      <div class="grid gap-6 mt-6 lg:grid-cols-3">
+        <div class="card bg-base-100 shadow-sm border border-base-200 lg:col-span-2">
+          <div class="card-body">
+            <h2 class="card-title">Concert Details</h2>
+            <div class="mt-3">
+              {% include "concerts/_concert_form.html" with form_action=add_action form_hx=add_form_hx %}
+            </div>
+          </div>
+        </div>
+
+        <div class="card bg-base-100 shadow-sm border border-base-200">
+          <div class="card-body">
+            <h2 class="card-title">Next Steps</h2>
+            <p class="text-sm opacity-70 mt-2">
+              After saving, the program editor will open so you can add music and arrange the order.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <dialog id="venue_modal" class="modal">
+      <div class="modal-box max-w-2xl">
+        <h3 class="font-bold text-lg">Add New Venue</h3>
+        <div id="venue-form-target">
+          <p class="py-4 text-sm opacity-70">Loading venue form...</p>
+        </div>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn btn-ghost">Close</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
+  {% endif %}
+</div>

@@ -3,15 +3,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<h1>
-  Add Music
-</h1>
-
-{% include "music/_music_form.html" %}
-
-<nav>
-  <a href="{% url 'music:music_list' %}">Cancel</a>
-</nav>
+{% include "music/_music_add_container.html" %}
 
 {% endblock %}

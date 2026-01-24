@@ -1,0 +1,168 @@
+<!-- concerts/templates/concerts/_concert_program_modal.html -->
+{% load widget_tweaks %}
+
+<div class="space-y-6">
+  <input type="hidden" id="concert-csrf" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <div>
+    <h2 class="text-lg font-semibold">Concert Program</h2>
+    <p class="text-sm opacity-70">{{ concert.title }}</p>
+  </div>
+
+  <section class="space-y-3">
+    <h3 class="text-sm font-semibold uppercase opacity-70">Current program</h3>
+    {% if program_items %}
+      <form
+        method="post"
+        hx-post="{% url 'concerts:concert_program_reorder' concert.pk %}"
+        hx-target="#concert-program-modal-body"
+        hx-swap="innerHTML"
+        hx-on::after-request="if (event.detail.successful && event.detail.requestConfig.verb === 'post') document.getElementById('concert-program-modal').close()"
+      >
+        {% csrf_token %}
+        <input type="hidden" name="order" id="program-order-input" value="">
+        <ol id="program-sortable" class="space-y-2 text-sm">
+          {% for item in program_items %}
+            <li
+              class="flex items-center justify-between gap-3 rounded-md border border-base-200 bg-base-50 px-3 py-2"
+              draggable="true"
+              data-id="{{ item.pk }}"
+            >
+              <div class="flex items-center gap-2">
+                <span class="text-xs opacity-60 cursor-move">☰</span>
+                <span class="program-order text-xs opacity-60">{{ forloop.counter }}.</span>
+                <span class="font-medium">{{ item.music.title }}</span>
+              </div>
+              <button
+                type="button"
+                class="btn btn-ghost btn-xs"
+                hx-post="{% url 'concerts:concert_program_delete' concert.pk item.pk %}"
+                hx-target="#concert-program-modal-body"
+                hx-swap="innerHTML"
+                hx-on::after-request="if (event.detail.successful && event.detail.requestConfig.verb === 'post') document.getElementById('concert-program-modal').close()"
+                hx-include="#concert-csrf"
+              >
+                Remove
+              </button>
+            </li>
+          {% endfor %}
+        </ol>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <button type="submit" class="btn btn-primary btn-sm">Save order</button>
+          {% if is_modal %}
+            <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('concert-program-modal').close()">Cancel</button>
+          {% else %}
+            <a class="btn btn-ghost btn-sm" href="{% url 'concerts:concert_edit' concert.pk %}">Cancel</a>
+          {% endif %}
+        </div>
+      </form>
+    {% else %}
+      <p class="text-sm opacity-60">No program items yet.</p>
+    {% endif %}
+  </section>
+
+  <section>
+    <h3 class="text-sm font-semibold uppercase opacity-70">Add music to program</h3>
+    <form
+      method="post"
+      hx-post="{% url 'concerts:concert_program_edit' concert.pk %}"
+      hx-target="#concert-program-modal-body"
+      hx-swap="innerHTML"
+      hx-on::after-request="if (event.detail.successful && event.detail.requestConfig.verb === 'post') document.getElementById('concert-program-modal').close()"
+    >
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+
+      <div class="form-control w-full mt-3">
+        <label class="label"><span class="label-text">Search by title</span></label>
+        <input
+          type="text"
+          name="q"
+          id="music-search"
+          placeholder="Type a title..."
+          class="input input-bordered w-full"
+          hx-get="{% url 'concerts:concert_music_search_hx' concert.pk %}"
+          hx-trigger="keyup delay:300ms"
+          hx-target="#music-search-results"
+          hx-indicator="#music-search-loading"
+          autofocus
+        />
+        <div class="mt-2">
+          <div id="music-search-loading" class="htmx-indicator text-xs opacity-60">Searching...</div>
+          <div id="music-search-results"></div>
+        </div>
+        <input type="hidden" name="music" id="id_music" />
+        <p class="text-xs opacity-60 mt-2">
+          Selected:
+          <strong id="music-display" class="font-semibold">None</strong>
+        </p>
+      </div>
+
+      {% render_field form.program_order type="hidden" value=next_order %}
+
+      <div class="form-control w-full mt-3">
+        {{ form.notes.label_tag }}
+        {% render_field form.notes class="textarea textarea-bordered w-full" %}
+        {{ form.notes.errors }}
+      </div>
+
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button type="submit" class="btn btn-primary btn-sm">Add to program</button>
+        {% if is_modal %}
+          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('concert-program-modal').close()">Cancel</button>
+        {% else %}
+          <a class="btn btn-ghost btn-sm" href="{% url 'concerts:concert_edit' concert.pk %}">Cancel</a>
+        {% endif %}
+      </div>
+    </form>
+  </section>
+</div>
+
+<script>
+  (function () {
+    const list = document.getElementById("program-sortable");
+    const orderInput = document.getElementById("program-order-input");
+    if (!list || !orderInput) return;
+
+    let dragging = null;
+
+    function updateOrder() {
+      const items = Array.from(list.querySelectorAll("[data-id]"));
+      orderInput.value = items.map((item) => item.dataset.id).join(",");
+      items.forEach((item, index) => {
+        const order = item.querySelector(".program-order");
+        if (order) order.textContent = `${index + 1}.`;
+      });
+    }
+
+    list.addEventListener("dragstart", (event) => {
+      const target = event.target.closest("[data-id]");
+      if (!target) return;
+      dragging = target;
+      event.dataTransfer.effectAllowed = "move";
+      target.classList.add("opacity-60");
+    });
+
+    list.addEventListener("dragend", (event) => {
+      const target = event.target.closest("[data-id]");
+      if (!target) return;
+      target.classList.remove("opacity-60");
+      dragging = null;
+      updateOrder();
+    });
+
+    list.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      const target = event.target.closest("[data-id]");
+      if (!target || target === dragging) return;
+      const rect = target.getBoundingClientRect();
+      const offset = event.clientY - rect.top;
+      if (offset > rect.height / 2) {
+        target.after(dragging);
+      } else {
+        target.before(dragging);
+      }
+    });
+
+    updateOrder();
+  })();
+</script>

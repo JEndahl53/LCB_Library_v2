@@ -1,0 +1,84 @@
+<!-- concerts/templates/concerts/_concert_edit_layout.html -->
+
+<section class="container mx-auto px-6 py-8">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-3xl font-semibold">Edit Concert</h1>
+      <p class="text-sm opacity-70">{{ concert.title }}</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <a class="btn btn-ghost btn-sm" href="{% url 'concerts:concert_detail' concert.pk %}">Back to details</a>
+      <a class="btn btn-ghost btn-sm" href="{% url 'concerts:concert_list' %}">Back to list</a>
+    </div>
+  </div>
+
+  <div class="grid gap-6 mt-6 lg:grid-cols-3">
+    <div class="card bg-base-100 shadow-sm border border-base-200 lg:col-span-2">
+      <div class="card-body">
+        <h2 class="card-title">Concert Details</h2>
+        <div class="mt-3">
+          {% include "concerts/_concert_form.html" %}
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      {% include "concerts/_concert_edit_people_panel.html" %}
+      {% include "concerts/_concert_edit_program_panel.html" %}
+    </div>
+  </div>
+</section>
+
+<dialog id="venue_modal" class="modal">
+  <div class="modal-box max-w-2xl">
+    <h3 class="font-bold text-lg">Add New Venue</h3>
+    <div id="venue-form-target">
+      <p class="py-4 text-sm opacity-70">Loading venue form...</p>
+    </div>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost">Close</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="concert-people-modal" class="modal">
+  <div class="modal-box max-w-4xl">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-3 top-3">✕</button>
+    </form>
+    <div id="concert-people-modal-body"></div>
+  </div>
+</dialog>
+
+<dialog id="person_modal" class="modal">
+  <div class="modal-box max-w-3xl">
+    <h3 class="font-bold text-lg">Add New Person</h3>
+    <div id="person-form-target">
+      <p class="py-4 text-sm opacity-70">Loading person form...</p>
+    </div>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn btn-ghost">Close</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="concert-program-modal" class="modal" {% if open_program_modal %}open{% endif %}>
+  <div class="modal-box max-w-4xl">
+    <form method="dialog">
+      <button class="btn btn-sm btn-circle btn-ghost absolute right-3 top-3">✕</button>
+    </form>
+    <div id="concert-program-modal-body"></div>
+  </div>
+</dialog>
+
+{% if open_program_modal %}
+  <div
+    hx-get="{% url 'concerts:concert_program_edit' concert.pk %}"
+    hx-target="#concert-program-modal-body"
+    hx-trigger="load"
+  ></div>
+{% endif %}

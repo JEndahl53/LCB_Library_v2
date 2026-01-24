@@ -3,78 +3,115 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Music Library</h1>
-
-<form method="get" class="music_filters">
-  <fieldset>
-    <legend>Search & Filters</legend>
-
-    <!-- Search -->
+<section class="container mx-auto px-6 py-8">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
     <div>
-      <label for="id_q">Search</label>
-      <input
-        type="text"
-        name="q"
-        id="id_q"
-        value="{{ q }}"
-        placeholder="Title, composer, arranger, etc."
-        />
+      <h1 class="text-2xl font-semibold">Music Library</h1>
+      <p class="text-sm opacity-70">Search, filter, and explore the LCB catalog.</p>
     </div>
+    {% if user.is_staff %}
+      <a class="btn btn-primary btn-sm" href="{% url 'music:music_add' %}">Add new piece</a>
+    {% endif %}
+  </div>
 
-    <!-- Genre filter -->
-    <div>
-      <label for="id_genre">Genre</label>
-      <select name="genre" id="id_genre">
-        <option value="">All genres</option>
-        {% for genre in genres %}
-          <option value="{{ genre.id }}"
-             {% if genre.id == selected_genre %}selected{% endif %}
+  <form
+    method="get"
+    action="{% url 'music:music_list' %}"
+    class="mt-6 card bg-base-100 shadow-sm border border-base-200"
+    hx-get="{% url 'music:music_list' %}"
+    hx-target="#music-table-container"
+    hx-push-url="true"
+    hx-trigger="input delay:300ms, change delay:150ms"
+  >
+    <div class="card-body p-5">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="text-sm font-semibold">Search & Filters</div>
+        <div class="join">
+          <input
+            class="join-item btn btn-xs sm:btn-sm"
+            type="radio"
+            name="view"
+            value="basic"
+            aria-label="Basic list"
+            {% if view_mode != "full" %}checked{% endif %}
           >
-            {{ genre.name }}
-        </option>
-        {% endfor %}
-      </select>
+          <input
+            class="join-item btn btn-xs sm:btn-sm"
+            type="radio"
+            name="view"
+            value="full"
+            aria-label="Full list"
+            {% if view_mode == "full" %}checked{% endif %}
+          >
+        </div>
+      </div>
+
+      <div class="mt-4 grid gap-4 md:grid-cols-4">
+        <label class="form-control w-full md:col-span-2">
+          <div class="label">
+            <span class="label-text">Search</span>
+          </div>
+          <input
+            class="input input-bordered w-full"
+            type="text"
+            name="q"
+            id="id_q"
+            value="{{ q|default_if_none:'' }}"
+            placeholder="Title, composer, arranger, etc."
+          />
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text">Genre</span>
+          </div>
+          <select class="select select-bordered w-full" name="genre" id="id_genre">
+            <option value="">All genres</option>
+            {% for genre in genres %}
+              <option value="{{ genre.id }}"
+                 {% if genre.id == selected_genre %}selected{% endif %}
+              >
+                {{ genre.name }}
+            </option>
+            {% endfor %}
+          </select>
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text">Score missing</span>
+          </div>
+          <select class="select select-bordered w-full" name="score_missing" id="id_score_missing">
+            <option value="">Any</option>
+            <option value="1" {% if score_missing == "1" %}selected{% endif %}>Yes</option>
+            <option value="0" {%if score_missing == "0" %}selected{% endif %}>No</option>
+          </select>
+        </label>
+
+        <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text">Needs review</span>
+          </div>
+          <select class="select select-bordered w-full" name="needs_review" id="id_needs_review">
+            <option value="">All</option>
+            <option value="1" {% if needs_review == "1" %}selected{% endif %}>Yes</option>
+            <option value="0" {% if needs_review == "0" %}selected{% endif %}>No</option>
+          </select>
+        </label>
+      </div>
+
+      <input type="hidden" id="music-sort-input" name="sort" value="{{ sort }}">
+      <input type="hidden" id="music-dir-input" name="dir" value="{{ sort_dir }}">
+
+      <div class="mt-5 flex flex-wrap items-center gap-2">
+        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+        <a class="btn btn-ghost btn-sm" href="{% url 'music:music_list' %}">Clear</a>
+      </div>
     </div>
+  </form>
 
-    <!-- Score missing -->
-    <div>
-      <label for="id_score_missing">Score missing</label>
-      <select name="score_missing" id="id_score_missing">
-        <option value="">Any</option>
-        <option value="1" {% if score_missing == "1" %}selected{% endif %}>
-        Yes
-        </option>
-        <option value="0" {%if score_missing == "0" %}selected{% endif %}>
-        No
-        </option>
-      </select>
-    </div>
-
-    <!-- Needs review -->
-    <div>
-      <label for="id_needs_review">Needs review</label>
-      <select name="needs_review" id="id_needs_review">
-        <option value="">All</option>
-        <option value="1" {% if needs_review == "1" %}selected{% endif %}>
-          Yes
-        </option>
-        <option value="0" {% if needs_review == "0" %}selected{% endif %}>
-          No
-        </option>
-      </select>
-    </div>
-
-    <div>
-      <button type="submit">Apply</button>
-      <a href="{% url 'music:music_list' %}">Clear</a>
-    </div>
-  </fieldset>
-</form>
-
-<hr />
-
-<div id="music-table-container">
-  {% include 'music/_music_list_table.html' %}
-</div>
-
+  <div id="music-table-container" class="mt-6">
+    {% include 'music/_music_list_table.html' %}
+  </div>
+</section>
 {% endblock %}

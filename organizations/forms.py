@@ -22,6 +22,12 @@ class OrganizationForm(forms.ModelForm):
         ]
 
 
+class OrganizationQuickAddForm(forms.ModelForm):
+    class Meta:
+        model = Organization
+        fields = ["name"]
+
+
 class OrganizationRoleForm(forms.ModelForm):
     class Meta:
         model = OrganizationRole

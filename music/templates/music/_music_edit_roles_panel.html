@@ -1,0 +1,36 @@
+<!-- music/templates/music/_music_edit_roles_panel.html -->
+
+<div
+  id="music-roles-panel"
+  class="card bg-base-100 shadow-sm border border-base-200"
+  {% if swap_oob %}hx-swap-oob="true"{% endif %}
+>
+  <div class="card-body">
+    <div class="flex items-center justify-between gap-3">
+      <h2 class="card-title">People &amp; Roles</h2>
+      <button
+        type="button"
+        class="btn btn-outline btn-xs"
+        onclick="document.getElementById('music-roles-modal').showModal()"
+        hx-get="{% url 'music:music_roles_edit' music.pk %}"
+        hx-target="#music-roles-modal-body"
+      >
+        Edit
+      </button>
+    </div>
+    <div class="mt-3 space-y-2 text-sm">
+      {% if music.roles.exists %}
+        {% for role_type, people in music.roles_by_type.items %}
+          <div>
+            <div class="text-xs uppercase opacity-60">{{ role_type.name }}</div>
+            <div class="mt-1">
+              {{ people|join:", " }}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <span class="opacity-60">No people are currently associated with this piece.</span>
+      {% endif %}
+    </div>
+  </div>
+</div>

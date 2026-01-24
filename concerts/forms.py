@@ -22,7 +22,7 @@ class ConcertForm(forms.ModelForm):
             'date': forms.DateTimeInput(attrs={'type': 'datetime-local', "class": "input input-bordered w-full"}),
             "title": forms.TextInput(attrs={"class": "input input-bordered w-full"}),
             "venue": forms.Select(attrs={"class": "select select-bordered w-full"}),
-            'description': forms.Textarea(attrs={"class": "textarea testarea-bordered w-full",'rows': 4}),
+            'description': forms.Textarea(attrs={"class": "textarea textarea-bordered w-full", "rows": 4}),
             "poster": forms.FileInput(attrs={"class": "file-input file-input-bordered w-full"}),
         }
 

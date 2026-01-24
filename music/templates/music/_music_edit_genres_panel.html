@@ -1,0 +1,29 @@
+<!-- music/templates/music/_music_edit_genres_panel.html -->
+
+<div
+  id="music-genres-panel"
+  class="card bg-base-100 shadow-sm border border-base-200"
+  {% if swap_oob %}hx-swap-oob="true"{% endif %}
+>
+  <div class="card-body">
+    <div class="flex items-center justify-between gap-3">
+      <h2 class="card-title">Genres</h2>
+      <button
+        type="button"
+        class="btn btn-outline btn-xs"
+        onclick="document.getElementById('music-genres-modal').showModal()"
+        hx-get="{% url 'music:music_genres_assign' music.pk %}"
+        hx-target="#music-genres-modal-body"
+      >
+        Edit
+      </button>
+    </div>
+    <div class="mt-3 flex flex-wrap gap-2 text-sm">
+      {% for genre in music.genres.all %}
+        <span class="badge badge-ghost">{{ genre.name }}</span>
+      {% empty %}
+        <span class="opacity-60">No genres assigned.</span>
+      {% endfor %}
+    </div>
+  </div>
+</div>

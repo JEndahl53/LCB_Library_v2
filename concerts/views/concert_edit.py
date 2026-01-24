@@ -2,13 +2,21 @@
 
 from django.contrib.admin.views.decorators import staff_member_required
 from django.shortcuts import render, redirect, get_object_or_404
+
 from concerts.forms import ConcertForm
 from concerts.models import Concert
 
 
 @staff_member_required
 def concert_edit(request, pk):
-    concert = get_object_or_404(Concert, pk=pk)
+    concert = get_object_or_404(
+        Concert.objects.prefetch_related(
+            "roles__person",
+            "roles__role_type",
+            "program_items__music",
+        ),
+        pk=pk,
+    )
 
     if request.method == "POST":
         form = ConcertForm(request.POST, instance=concert)

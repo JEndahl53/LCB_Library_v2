@@ -1,0 +1,26 @@
+<!-- concerts/templates/concerts/_concert_music_search_results.html -->
+
+<ul class="menu menu-sm bg-base-100 border border-base-200 rounded-md">
+  {% for music in music_list %}
+    <li>
+      <button
+        type="button"
+        class="justify-start"
+        hx-on:click="
+          document.getElementById('id_music').value='{{ music.id }}';
+          document.getElementById('music-display').innerText='{{ music.title|escapejs }}';
+        "
+      >
+        <div class="text-left">
+          <div class="font-medium">{{ music.title }}</div>
+          <div class="text-xs opacity-60">
+            {% if music.composer_names %}{{ music.composer_names }}{% else %}--{% endif %}
+            {% if music.arranger_names %} • Arr. {{ music.arranger_names }}{% endif %}
+          </div>
+        </div>
+      </button>
+    </li>
+  {% empty %}
+    <li class="disabled"><span>No matches.</span></li>
+  {% endfor %}
+</ul>

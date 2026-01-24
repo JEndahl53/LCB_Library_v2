@@ -2,26 +2,65 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Concerts</h1>
-<table>
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Date</th>
-      <th>Venue</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for concert in concerts %}
-      <tr>
-        <td><a href="{% url 'concerts:concert_detail' concert.id %}">{{ concert.title }}</a></td>
-        <td>{{ concert.date|date:"F j, Y, g:i a"|default:"TBD" }}</td>
-        <td>{{ concert.venue|default:"TBD" }}</td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="4">No concerts.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+<section class="container mx-auto px-6 py-8">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-semibold">Concerts</h1>
+      <p class="text-sm opacity-70">Browse past and upcoming performances.</p>
+    </div>
+    {% if user.is_staff %}
+      <a class="btn btn-primary btn-sm" href="{% url 'concerts:concert_add' %}">Add concert</a>
+    {% endif %}
+  </div>
+
+  <div class="mt-6 overflow-x-auto border border-base-200 rounded-lg bg-base-100">
+    <table class="table table-sm sm:table-md">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Date</th>
+          <th>Venue</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for concert in concerts %}
+          <tr>
+            <td class="max-w-xs">
+              <a
+                class="tooltip tooltip-top font-medium text-cyan-700 hover:text-cyan-900 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
+                href="{% url 'concerts:concert_detail' concert.id %}"
+                aria-label="View details for {{ concert.title }}"
+                data-tip="View details"
+              >
+                {{ concert.title }}
+              </a>
+            </td>
+            <td class="whitespace-nowrap text-sm">{{ concert.date|date:"F j, Y, g:i a"|default:"TBD" }}</td>
+            <td class="text-sm">{{ concert.venue|default:"TBD" }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3" class="text-sm opacity-70">No concerts.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% if page_obj %}
+    <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+      <p class="text-sm opacity-70">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+      <div class="join">
+        {% if page_obj.has_previous %}
+          <a class="btn btn-xs join-item" href="?page=1">First</a>
+          <a class="btn btn-xs join-item" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+        {% endif %}
+        {% if page_obj.has_next %}
+          <a class="btn btn-xs join-item" href="?page={{ page_obj.next_page_number }}">Next</a>
+          <a class="btn btn-xs join-item" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</section>
 {% endblock %}

@@ -14,7 +14,7 @@ class GenreForm(forms.ModelForm):
             "notes",
         ]
 
-    class GenreQuickAddForm(forms.ModelForm):
-        class Meta:
-            model = Genre
-            fields = ["name"]
+class GenreQuickAddForm(forms.ModelForm):
+    class Meta:
+        model = Genre
+        fields = ["name"]

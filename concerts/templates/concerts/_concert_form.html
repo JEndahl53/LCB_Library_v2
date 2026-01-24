@@ -1,0 +1,82 @@
+<!-- concerts/templates/concerts/_concert_form.html -->
+{% load widget_tweaks %}
+
+<form
+  method="post"
+  enctype="multipart/form-data"
+  novalidate
+  class="space-y-6"
+  {% if form_action %}action="{{ form_action }}"{% endif %}
+  {% if form_hx %}{{ form_hx|safe }}{% endif %}
+>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="alert alert-error">
+      {{ form.non_field_errors }}
+    </div>
+  {% endif %}
+
+  <fieldset>
+    <legend class="text-sm font-semibold uppercase opacity-70">Basic Information</legend>
+
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">{{ form.title.label }}</span></label>
+      {% render_field form.title class="input input-bordered w-full" %}
+      {{ form.title.errors }}
+    </div>
+
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">{{ form.date.label }}</span></label>
+      {% render_field form.date class="input input-bordered w-full" %}
+      {{ form.date.errors }}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="text-sm font-semibold uppercase opacity-70">Venue</legend>
+
+    <div class="form-control w-full mt-3">
+      <label class="label flex items-center justify-between">
+        <span class="label-text">{{ form.venue.label }}</span>
+        <button
+          type="button"
+          class="btn btn-xs btn-outline"
+          hx-get="{% url 'venues:venue_add_hx' %}"
+          hx-target="#venue-form-target"
+          hx-on::after-swap="venue_modal.showModal()"
+        >
+          + Add venue
+        </button>
+      </label>
+      <div id="venue-select-container">
+        {% render_field form.venue class="select select-bordered w-full" %}
+      </div>
+      {{ form.venue.errors }}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="text-sm font-semibold uppercase opacity-70">Notes</legend>
+
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">Description / Notes</span></label>
+      {% render_field form.description class="textarea textarea-bordered w-full" %}
+      {{ form.description.errors }}
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend class="text-sm font-semibold uppercase opacity-70">Poster</legend>
+
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">{{ form.poster.label }}</span></label>
+      {% render_field form.poster class="file-input file-input-bordered w-full" %}
+      {{ form.poster.errors }}
+    </div>
+  </fieldset>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+  </div>
+</form>

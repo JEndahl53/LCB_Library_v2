@@ -2,71 +2,170 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{ concert.title }}</h1>
-
-<dl>
-  <dt>Date</dt>
-  <dd>{{ concert.date|date:"F j, Y, g:i a"|default:"TBD" }}</dd>
-
-  <dt>Venue</dt>
-  <dd>
-    {% if concert.venue %}
-      {{ concert.venue.name }}
-      {% if concert.venue.city %}
-        <br><small>{{ concert.venue.get_address2 }}</small>
-      {% endif %}
-    {% else %}
-      TBD
-    {% endif %}
-  </dd>
-
-  {% if concert.description %}
-    <dt>Description</dt>
-    <dd>{{ concert.description|linebreaks }}</dd>
-  {% endif %}
-</dl>
-
-<hr>
-
-<h2>Program</h2>
-{% if concert.program_items.exists %}
-  <ol>
-    {% for item in concert.program_items.all %}
-      <li>
-        <strong>{{ item.music.title }}</strong>
-        {% if item.notes %}
-          <br><small>{{ item.notes }}</small>
+<section class="relative overflow-hidden bg-gradient-to-br from-cyan-900 via-sky-800 to-emerald-700 text-white">
+  <div class="absolute inset-0 opacity-25">
+    <div class="absolute -top-24 -right-20 h-72 w-72 rounded-full bg-white/40 blur-3xl"></div>
+    <div class="absolute -bottom-24 -left-20 h-72 w-72 rounded-full bg-cyan-200/30 blur-3xl"></div>
+  </div>
+  <div class="container mx-auto px-6 py-10 lg:py-14 relative">
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p class="text-xs uppercase tracking-[0.3em] text-cyan-100">Concert</p>
+        <h1 class="mt-3 text-3xl sm:text-4xl lg:text-5xl font-semibold leading-tight">
+          {{ concert.title }}
+        </h1>
+        <p class="mt-2 text-sm text-cyan-100">
+          {{ concert.date|date:"F j, Y"|default:"Date TBD" }}
+        </p>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a class="btn btn-outline btn-sm sm:btn-md border-white/40 text-white hover:bg-white/10 hover:border-white" href="{% url 'concerts:concert_list' %}">Back to concerts</a>
+        {% if request.user.is_staff %}
+          <a class="btn btn-primary btn-sm sm:btn-md" href="{% url 'concerts:concert_edit' concert.pk %}">Edit concert</a>
         {% endif %}
-      </li>
-    {% endfor %}
-  </ol>
-{% else %}
-  <p>Program to be announced.</p>
-{% endif %}
+      </div>
+    </div>
+  </div>
+</section>
 
-<hr>
+<section class="container mx-auto px-6 py-10">
+  <div class="grid gap-6 lg:grid-cols-3">
+    <div class="lg:col-span-2 space-y-6">
+      <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body">
+          <h2 class="card-title">Main Details</h2>
+          <dl class="mt-3 grid gap-4 sm:grid-cols-2 text-sm">
+            <div>
+              <dt class="text-xs uppercase opacity-60">Title</dt>
+              <dd class="mt-1">{{ concert.title }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs uppercase opacity-60">Date</dt>
+              <dd class="mt-1">{{ concert.date|date:"F j, Y"|default:"TBD" }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs uppercase opacity-60">Time</dt>
+              <dd class="mt-1">{{ concert.date|date:"g:i a"|default:"TBD" }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs uppercase opacity-60">Venue</dt>
+              <dd class="mt-1">
+                {% if concert.venue %}
+                  {{ concert.venue.name }}
+                {% else %}
+                  TBD
+                {% endif %}
+              </dd>
+            </div>
+            <div class="sm:col-span-2">
+              <dt class="text-xs uppercase opacity-60">Venue Address</dt>
+              <dd class="mt-1">
+                {% if concert.venue and concert.venue.get_address2 %}
+                  {{ concert.venue.get_address2 }}
+                {% else %}
+                  --
+                {% endif %}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </div>
 
-<h2>Artists</h2>
-{% if concert.roles.exists %}
-  <ul>
-    {% for role in concert.roles.all %}
-      <li>
-        <strong>{{ role.role_type.name }}:</strong>
-        {{ role.person }}
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Artists to be announced.</p>
-{% endif %}
+      <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body">
+          <h2 class="card-title">Additional Details</h2>
+          <div class="mt-3 space-y-4 text-sm">
+            <div>
+              <div class="text-xs uppercase opacity-60">Conductors</div>
+              <div class="mt-1">
+                {% if conductors %}
+                  {% for role in conductors %}
+                    <div>{{ role.person }} <span class="opacity-60">({{ role.role_type.name }})</span></div>
+                  {% endfor %}
+                {% else %}
+                  <span class="opacity-60">--</span>
+                {% endif %}
+              </div>
+            </div>
+            <div>
+              <div class="text-xs uppercase opacity-60">Special Guests</div>
+              <div class="mt-1">
+                {% if guests %}
+                  {% for role in guests %}
+                    <div>{{ role.person }} <span class="opacity-60">({{ role.role_type.name }})</span></div>
+                  {% endfor %}
+                {% else %}
+                  <span class="opacity-60">--</span>
+                {% endif %}
+              </div>
+            </div>
+            <div>
+              <div class="text-xs uppercase opacity-60">Concert Notes</div>
+              <div class="mt-1">
+                {% if concert.description %}
+                  {{ concert.description|linebreaks }}
+                {% else %}
+                  <span class="opacity-60">No notes provided.</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-<hr>
+      <div class="card bg-base-100 shadow-sm border border-base-200">
+        <div class="card-body">
+          <h2 class="card-title">Concert Poster</h2>
+          <div class="mt-3">
+            {% if concert.poster %}
+              <a href="{{ concert.poster.url }}" target="_blank" rel="noopener">
+                <img
+                  src="{{ concert.poster.url }}"
+                  alt="Poster for {{ concert.title }}"
+                  class="max-h-96 w-full object-contain rounded-md border border-base-200"
+                >
+              </a>
+              <p class="text-xs opacity-60 mt-2">Click to view full size.</p>
+            {% else %}
+              <span class="text-sm opacity-60">No poster uploaded.</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
 
-<nav>
-  {% if request.user.is_staff %}
-    <a href="{% url 'concerts:concert_edit' concert.pk %}">Edit concert</a>
-  {% endif %}
-  <a href="{% url 'concerts:concert_list' %}">Back to concert list</a>
-</nav>
-
+    <div class="card bg-base-100 shadow-sm border border-base-200">
+      <div class="card-body">
+        <h2 class="card-title">Concert Program</h2>
+        {% if program_items %}
+          <ol class="mt-4 space-y-3 text-sm">
+            {% for item in program_items %}
+              <li class="flex items-start justify-between gap-3">
+                <div>
+                  <div class="font-semibold">{{ item.music.title }}</div>
+                  <div class="text-xs opacity-60">
+                    {% if item.composer_names %}{{ item.composer_names }}{% else %}--{% endif %}
+                    {% if item.arranger_names %} • Arr. {{ item.arranger_names }}{% endif %}
+                  </div>
+                  {% if item.notes %}
+                    <div class="text-xs opacity-60 mt-1">{{ item.notes }}</div>
+                  {% endif %}
+                </div>
+                {% if item.has_recordings %}
+                  <span class="tooltip tooltip-left" data-tip="Recording available">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-cyan-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 9.75v4.5m3-6v7.5m3-9v10.5M4.5 5.25v13.5A1.5 1.5 0 0 0 6 20.25h12a1.5 1.5 0 0 0 1.5-1.5V5.25A1.5 1.5 0 0 0 18 3.75H6a1.5 1.5 0 0 0-1.5 1.5Z" />
+                    </svg>
+                  </span>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ol>
+        {% else %}
+          <p class="text-sm opacity-70 mt-3">Program to be announced.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
 {% endblock %}

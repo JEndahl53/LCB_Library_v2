@@ -9,7 +9,16 @@ from music.models import Music
 
 @staff_member_required
 def music_edit(request, pk):
-    music = get_object_or_404(Music, pk=pk)
+    music = get_object_or_404(
+        Music.objects.prefetch_related(
+            "genres",
+            "roles__person",
+            "roles__role_type",
+            "organization_links__organization",
+            "organization_links__role_type",
+        ),
+        pk=pk,
+    )
 
     if request.method == "POST":
         form = MusicForm(request.POST, instance=music)

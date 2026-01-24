@@ -1,96 +1,100 @@
 <!-- music/templates/music/_music_form.html -->
 <!-- this is a partial template for adding/editing music -->
+{% load widget_tweaks %}
 
-<form method="post" novalidate>
+<form
+  method="post"
+  novalidate
+  class="space-y-6"
+  {% if form_action %}action="{{ form_action }}"{% endif %}
+  {% if form_hx %}{{ form_hx|safe }}{% endif %}
+>
   {% csrf_token %}
 
   {% if form.non_field_errors %}
-    <div class="form-errors">
+    <div class="alert alert-error">
       {{ form.non_field_errors }}
     </div>
   {% endif %}
 
   <fieldset>
-    <legend>Basic Information</legend>
+    <legend class="text-sm font-semibold uppercase opacity-70">Basic Information</legend>
 
-    <div class="form-row">
-      {{ form.title.label_tag }}
-      {{ form.title }}
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">{{ form.title.label }}</span></label>
+      {% render_field form.title class="input input-bordered w-full" %}
       {{ form.title.errors }}
     </div>
 
-    <div class="form-row">
-      {{ form.year_composed.label_tag }}
-      {{ form.year_composed }}
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">{{ form.year_composed.label }}</span></label>
+      {% render_field form.year_composed class="input input-bordered w-full" %}
       {{ form.year_composed.errors }}
     </div>
 
-    <div class="form-row">
-      {{ form.difficulty.label_tag }}
-      {{ form.difficulty }}
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">{{ form.difficulty.label }}</span></label>
+      {% render_field form.difficulty class="select select-bordered w-full" %}
       {{ form.difficulty.errors }}
     </div>
 
-    <div class="form-row">
-      {{ form.duration.label_tag }}
-      {{ form.duration }}
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">{{ form.duration.label }}</span></label>
+      {% render_field form.duration class="input input-bordered w-full" %}
       {{ form.duration.errors }}
     </div>
   </fieldset>
 
   <fieldset>
-    <legend>Library Location</legend>
+    <legend class="text-sm font-semibold uppercase opacity-70">Library Location</legend>
 
-    <div class="form-row">
-      {{ form.location_drawer.label_tag }}
-      {{ form.location_drawer }}
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">{{ form.location_drawer.label }}</span></label>
+      {% render_field form.location_drawer class="input input-bordered w-full" %}
       {{ form.location_drawer.errors }}
     </div>
 
-    <div class="form-row">
-      {{ form.location_number.label_tag }}
-      {{ form.location_number }}
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">{{ form.location_number.label }}</span></label>
+      {% render_field form.location_number class="input input-bordered w-full" %}
       {{ form.location_number.errors }}
     </div>
   </fieldset>
 
   <fieldset>
-    <legend>Flags</legend>
+    <legend class="text-sm font-semibold uppercase opacity-70">Flags</legend>
 
-    <div class="form-row">
-      {{ form.score_missing }}
-      {{ form.score_missing.label_tag }}
+    <label class="label cursor-pointer justify-start gap-2 mt-3">
+      {% render_field form.score_missing class="checkbox" %}
+      <span class="label-text mr-8">{{ form.score_missing.label }}</span>
       {{ form.score_missing.errors }}
-    </div>
+    </label>
 
-    <div class="form-row">
-      {{ form.needs_review }}
-      {{ form.needs_review.label_tag }}
+    <label class="label cursor-pointer justify-start gap-2 mt-2">
+      {% render_field form.needs_review class="checkbox" %}
+      <span class="label-text mr-8">{{ form.needs_review.label }}</span>
       {{ form.needs_review.errors }}
-    </div>
+    </label>
 
-    <div class="form-row">
-      {{ form.is_active }}
-      {{ form.is_active.label_tag }}
+    <label class="label cursor-pointer justify-start gap-2 mt-2">
+      {% render_field form.is_active class="checkbox" %}
+      <span class="label-text mr-8">{{ form.is_active.label }}</span>
       {{ form.is_active.errors }}
-    </div>
+    </label>
   </fieldset>
 
   <fieldset>
-    <legend>Notes</legend>
+    <legend class="text-sm font-semibold uppercase opacity-70">Notes</legend>
 
-    <div class="form-row">
-      {{ form.notes.label_tag }}
-      {{ form.notes }}
+    <div class="form-control w-full mt-3">
+      <label class="label"><span class="label-text">{{ form.notes.label }}</span></label>
+      {% render_field form.notes class="textarea textarea-bordered w-full" %}
       {{ form.notes.errors }}
     </div>
   </fieldset>
 
   <div class="form-actions">
-    <button type="submit" class="btn btn-primary">
-      Save
-    </button>
-
+    <button type="submit" class="btn btn-primary btn-sm">Save</button>
   </div>
 
 </form>

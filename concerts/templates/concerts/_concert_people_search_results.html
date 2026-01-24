@@ -6,12 +6,10 @@
       <li>
         <button
           type="button"
-          hx-post="{% url 'concerts:concert_people_add_hx' concert.pk role_type.id %}"
-          hx-target="#role-section-{{ role_type.id }}"
-          hx-swap="outerHTML"
-          hx-include="[name='csrfmiddlewaretoken']"
-          hx-vals='{"person_id": "{{ p.id }}"}'
-          >
+          class="justify-start"
+          data-person-id="{{ p.id }}"
+          data-person-name="{{ p }}"
+        >
           {{ p }}
         </button>
       </li>
