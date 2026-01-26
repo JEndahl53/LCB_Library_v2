@@ -6,69 +6,97 @@
 {% block title %}People{% endblock %}
 
 {% block content %}
-<h1>People</h1>
+<section class="container mx-auto px-6 py-8">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold">People</h1>
+      <p class="text-sm opacity-70">Find people, ensembles, and their roles.</p>
+    </div>
+    {% if user.is_staff %}
+      <a class="btn btn-primary btn-sm" href="{% url 'people:person_add' %}">Add person</a>
+    {% endif %}
+  </div>
 
-<form method="get">
-  <fieldset>
-    <legend>Filters</legend>
+  <form
+    method="get"
+    action="{% url 'people:person_list' %}"
+    class="mt-6 card bg-base-100 shadow-sm border border-base-200"
+    hx-get="{% url 'people:person_list' %}"
+    hx-target="#person-table"
+    hx-push-url="true"
+    hx-trigger="input delay:300ms, change delay:150ms"
+  >
+    <div class="card-body p-5">
+      <div class="text-sm font-semibold">Filters</div>
 
-    <!-- live search for name, via HTMX (no Alpine) -->
-    <input
-      type="search"
-      name="q"
-      placeholder="Search people..."
-      value="{{ request.GET.q|default:'' }}"
-      hx-get="{% url 'people:person_list' %}"
-      hx-trigger="keyup changed delay:300ms"
-      hx-target="#person-table"
-      hx-push-url="true"
-      hx-include="closest form"
-    />
+      <div class="mt-4 grid gap-4 md:grid-cols-4">
+        <label class="form-control w-full md:col-span-2">
+          <div class="label">
+            <span class="label-text">Search</span>
+          </div>
+          <input
+            class="input input-bordered w-full"
+            type="search"
+            name="q"
+            placeholder="Search people..."
+            value="{{ request.GET.q|default:'' }}"
+          />
+        </label>
 
-    <label>
-      Active:
-      <select name="active">
-        <option value="active" {% if filters.active == 'active' %}selected{% endif %}>Active</option>
-        <option value="inactive" {% if filters.active == 'inactive' %}selected{% endif %}>Inactive</option>
-        <option value="all" {% if filters.active == 'all' %}selected{% endif %}>All</option>
-      </select>
-    </label>
+        <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text">Active</span>
+          </div>
+          <select class="select select-bordered w-full" name="active">
+            <option value="active" {% if filters.active == 'active' %}selected{% endif %}>Active</option>
+            <option value="inactive" {% if filters.active == 'inactive' %}selected{% endif %}>Inactive</option>
+            <option value="all" {% if filters.active == 'all' %}selected{% endif %}>All</option>
+          </select>
+        </label>
 
-    <label>
-      Type:
-      <select name="type">
-        <option value="both" {% if filters.type == 'both' %}selected{% endif %}>Both</option>
-        <option value="individual" {% if filters.type == 'individual' %}selected{% endif %}>Individual</option>
-        <option value="ensemble" {% if filters.type == 'ensemble' %}selected{% endif %}>Ensemble</option>
-      </select>
-    </label>
+        <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text">Type</span>
+          </div>
+          <select class="select select-bordered w-full" name="type">
+            <option value="both" {% if filters.type == 'both' %}selected{% endif %}>Both</option>
+            <option value="individual" {% if filters.type == 'individual' %}selected{% endif %}>Individual</option>
+            <option value="ensemble" {% if filters.type == 'ensemble' %}selected{% endif %}>Ensemble</option>
+          </select>
+        </label>
 
-    <label>
-      Review:
-      <select name="needs_review">
-        <option value="all" {% if filters.review == "all" %}selected{% endif %}>All</option>
-        <option value="needs_review" {% if filters.review == "needs_review" %}selected{% endif %}>Needs review</option>
-      </select>
-    </label>
+        <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text">Review</span>
+          </div>
+          <select class="select select-bordered w-full" name="needs_review">
+            <option value="all" {% if filters.needs_review == "all" %}selected{% endif %}>All</option>
+            <option value="needs_review" {% if filters.needs_review == "needs_review" %}selected{% endif %}>Needs review</option>
+          </select>
+        </label>
 
-    <label>
-      Role:
-      <select name="role">
-        <option value="" {% if not filters.role %}selected{% endif %}>All roles</option>
-        {% for role in role_types %}
-          <option value="{{ role.id }}" {% if filters.role == role.id %}selected{% endif %}>{{ role.name }}</option>
-        {% endfor %}
-      </select>
-    </label>
+        <label class="form-control w-full md:col-span-2">
+          <div class="label">
+            <span class="label-text">Role</span>
+          </div>
+          <select class="select select-bordered w-full" name="role">
+            <option value="" {% if not filters.role %}selected{% endif %}>All roles</option>
+            {% for role in role_types %}
+              <option value="{{ role.id }}" {% if filters.role == role.id %}selected{% endif %}>{{ role.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
+      </div>
 
-    <button type="submit">Apply</button>
-  </fieldset>
-</form>
+      <div class="mt-5 flex flex-wrap items-center gap-2">
+        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+        <a class="btn btn-ghost btn-sm" href="{% url 'people:person_list' %}">Clear</a>
+      </div>
+    </div>
+  </form>
 
-<a href="{% url 'people:person_add' %}">Add person</a>
-
-<div id="person-table">
-  {% include "people/_person_table.html" %}
-</div>
+  <div id="person-table" class="mt-6">
+    {% include "people/_person_table.html" %}
+  </div>
+</section>
 {% endblock %}
-

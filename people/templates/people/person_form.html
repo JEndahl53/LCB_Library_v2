@@ -6,19 +6,34 @@
 {% block title %}{{ page_title }}{% endblock %}
 
 {% block content %}
+<section class="container mx-auto px-6 py-8">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-3xl font-semibold">{{ page_title }}</h1>
+    </div>
+    <a class="btn btn-ghost btn-sm" href="{% if next %}{{ next }}{% else %}{% url 'people:person_list' %}{% endif %}">Cancel</a>
+  </div>
 
-<h1>{{ page_title }}</h1>
-
-<form method="post">
-    {% csrf_token %}
-    {% if next %}
-      <input type="hidden" name="next" value="{{ next }}">
-    {% endif %}
-    {{ form.as_p }}
-    <button type="submit">
-      {{ submit_label|default:"Save" }}
-    </button>
-
-    <a href="{% if next %}{{ next }}{% else %}{% url 'people:person_list' %}{% endif %}">Cancel</a>
-</form>
+  <div class="card bg-base-100 shadow-sm border border-base-200 mt-6">
+    <div class="card-body">
+      <div class="mb-4 rounded-md border border-base-200 bg-base-100 px-4 py-3 text-sm text-gray-500">
+        Roles are derived from related records. To give someone a role like Composer or Arranger,
+        add them to a piece of music (or a concert) with that role; roles are not assigned here.
+      </div>
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
+        {% include "people/_person_form_fields.html" %}
+        <div class="flex flex-wrap gap-2">
+          <button type="submit" class="btn btn-primary btn-sm">
+            {{ submit_label|default:"Save" }}
+          </button>
+          <a class="btn btn-ghost btn-sm" href="{% if next %}{{ next }}{% else %}{% url 'people:person_list' %}{% endif %}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
 {% endblock %}

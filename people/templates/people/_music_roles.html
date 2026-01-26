@@ -4,12 +4,21 @@
 {% regroup music_roles by role_type as role_groups %}
 
 {% for group in role_groups %}
-  <h3>{{ group.grouper.name }}</h3>
-  <ul>
-    {% for role in group.list %}
-    <li>{{ role.music.title }}</li>
-    {% endfor %}
-  </ul>
+  <div class="mb-4">
+    <h3 class="text-xs uppercase opacity-60">{{ group.grouper.name }}</h3>
+    <ul class="mt-2 space-y-1 text-sm">
+      {% for role in group.list %}
+        <li>
+          <a
+            class="link link-hover"
+            href="{% url 'music:music_detail' role.music.pk %}"
+          >
+            {{ role.music.title }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
 {% empty %}
-  <p>No music roles were found.</p>
+  <p class="text-sm opacity-60">No music roles were found.</p>
 {% endfor %}

@@ -19,6 +19,7 @@ class OrganizationForm(forms.ModelForm):
             'zip_code',
             'website',
             'is_active',
+            'needs_review',
         ]
 
 

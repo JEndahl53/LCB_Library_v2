@@ -3,16 +3,56 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Add Genre</h1>
+{% load widget_tweaks %}
+<section class="container mx-auto px-6 py-8">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-3xl font-semibold">Add Genre</h1>
+    </div>
+    <a class="btn btn-ghost btn-sm" href="{% if next %}{{ next }}{% else %}{% url 'genres:genre_list' %}{% endif %}">Cancel</a>
+  </div>
 
-<form method="post">
-  {% csrf_token %}
-  {% if next %}
-    <input type="hidden" name="next" value="{{ next }}">
-  {% endif %}
-  {{ form.as_p }}
+  <div class="card bg-base-100 shadow-sm border border-base-200 mt-6">
+    <div class="card-body">
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
 
-  <button type="submit">Create</button>
-  <a href="{% if next %}{{ next }}{% else %}{% url 'genres:genre_list' %}{% endif %}">Cancel</a>
-</form>
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text">{{ form.name.label }}</span></label>
+          {% render_field form.name class="input input-bordered w-full" %}
+          {{ form.name.errors }}
+        </div>
+
+        <div class="space-y-2">
+          <label class="label cursor-pointer justify-start gap-2">
+            {% render_field form.is_active class="checkbox" %}
+            <span class="label-text">{{ form.is_active.label }}</span>
+          </label>
+          {% if form.is_active.help_text %}
+            <div class="text-xs text-gray-500 -mt-1">{{ form.is_active.help_text }}</div>
+          {% endif %}
+
+          <label class="label cursor-pointer justify-start gap-2">
+            {% render_field form.needs_review class="checkbox" %}
+            <span class="label-text">{{ form.needs_review.label }}</span>
+          </label>
+        </div>
+
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text">{{ form.notes.label }}</span></label>
+          {% render_field form.notes class="textarea textarea-bordered w-full" %}
+          {{ form.notes.errors }}
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <button type="submit" class="btn btn-primary btn-sm">Create</button>
+          <a class="btn btn-ghost btn-sm" href="{% if next %}{{ next }}{% else %}{% url 'genres:genre_list' %}{% endif %}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
 {% endblock %}

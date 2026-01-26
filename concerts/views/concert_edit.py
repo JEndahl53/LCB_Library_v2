@@ -19,7 +19,7 @@ def concert_edit(request, pk):
     )
 
     if request.method == "POST":
-        form = ConcertForm(request.POST, instance=concert)
+        form = ConcertForm(request.POST, request.FILES, instance=concert)
         if form.is_valid():
             concert = form.save()
             return redirect("concerts:concert_detail", pk=concert.pk)

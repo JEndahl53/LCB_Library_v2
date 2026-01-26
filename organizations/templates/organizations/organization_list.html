@@ -5,51 +5,86 @@
 {% block title %}Organizations{% endblock %}
 
 {% block content %}
-<h1>Organizations</h1>
+<section class="container mx-auto px-6 py-8">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="text-2xl font-semibold">Organizations</h1>
+      <p class="text-sm opacity-70">Manage organizations and related roles.</p>
+    </div>
+    {% if user.is_staff %}
+      <a class="btn btn-primary btn-sm" href="{% url 'organizations:organization_add' %}">Add organization</a>
+    {% endif %}
+  </div>
 
-<form method="get">
-  <fieldset>
-    <legend>Filters</legend>
+  <form
+    method="get"
+    action="{% url 'organizations:organization_list' %}"
+    class="mt-6 card bg-base-100 shadow-sm border border-base-200"
+    hx-get="{% url 'organizations:organization_list' %}"
+    hx-target="#organization-table"
+    hx-push-url="true"
+    hx-trigger="input delay:300ms, change delay:150ms"
+  >
+    <div class="card-body p-5">
+      <div class="text-sm font-semibold">Filters</div>
 
-    <!-- live search for name, via HTMX (no Alpine) -->
-    <input
-      type="search"
-      name="q"
-      placeholder="Search organizations..."
-      value="{{ request.GET.q|default:'' }}"
-      hx-get="{% url 'organizations:organization_list' %}"
-      hx-trigger="keyup changed delay:300ms"
-      hx-target="#organization-table"
-      hx-push-url="true"
-      hx-include="closest form"
-    />
+      <div class="mt-4 grid gap-4 md:grid-cols-4">
+        <label class="form-control w-full md:col-span-2">
+          <div class="label">
+            <span class="label-text">Search</span>
+          </div>
+          <input
+            class="input input-bordered w-full"
+            type="search"
+            name="q"
+            placeholder="Search organizations..."
+            value="{{ request.GET.q|default:'' }}"
+          />
+        </label>
 
-    <label>
-      Active:
-      <select name="active">
-        <option value="active" {% if filters.active == 'active' %}selected{% endif %}>Active</option>
-        <option value="inactive" {% if filters.active == 'inactive' %}selected{% endif %}>Inactive</option>
-        <option value="all" {% if filters.active == 'all' %}selected{% endif %}>All</option>
-      </select>
-    </label>
+        <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text">Active</span>
+          </div>
+          <select class="select select-bordered w-full" name="active">
+            <option value="active" {% if filters.active == 'active' %}selected{% endif %}>Active</option>
+            <option value="inactive" {% if filters.active == 'inactive' %}selected{% endif %}>Inactive</option>
+            <option value="all" {% if filters.active == 'all' %}selected{% endif %}>All</option>
+          </select>
+        </label>
 
-    <label>
-      Role:
-      <select name="role">
-        <option value="" {% if not filters.role %}selected{% endif %}>All roles</option>
-        {% for role in role_types %}
-          <option value="{{ role.id }}" {% if filters.role == role.id %}selected{% endif %}>{{ role.name }}</option>
-        {% endfor %}
-      </select>
-    </label>
+        <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text">Role</span>
+          </div>
+          <select class="select select-bordered w-full" name="role">
+            <option value="" {% if not filters.role %}selected{% endif %}>All roles</option>
+            {% for role in role_types %}
+              <option value="{{ role.id }}" {% if filters.role == role.id %}selected{% endif %}>{{ role.name }}</option>
+            {% endfor %}
+          </select>
+        </label>
 
-    <button type="submit">Apply</button>
-  </fieldset>
-</form>
+        <label class="form-control w-full">
+          <div class="label">
+            <span class="label-text">Needs Review</span>
+          </div>
+          <select class="select select-bordered w-full" name="needs_review">
+            <option value="all" {% if filters.needs_review == "all" %}selected{% endif %}>All</option>
+            <option value="needs_review" {% if filters.needs_review == "needs_review" %}selected{% endif %}>Needs review</option>
+          </select>
+        </label>
+      </div>
 
-<a href="{% url 'organizations:organization_add' %}">Add organization</a>
+      <div class="mt-5 flex flex-wrap items-center gap-2">
+        <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+        <a class="btn btn-ghost btn-sm" href="{% url 'organizations:organization_list' %}">Clear</a>
+      </div>
+    </div>
+  </form>
 
-<div id="organization-table">
-  {% include "organizations/_organization_table.html" %}
-</div>
+  <div id="organization-table" class="mt-6">
+    {% include "organizations/_organization_table.html" %}
+  </div>
+</section>
 {% endblock %}

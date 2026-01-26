@@ -1,71 +1,89 @@
 <!-- HTMX table for person_list -->
 {% load people_extras %}
 
-<table>
-  <thead>
-  <tr>
-    <th>Last</th>
-    <th>First</th>
-    <th>Display</th>
-    <th>Roles</th>
-  </tr>
-  </thead>
-  <tbody>
-    {% for person in people %}
+<div class="overflow-x-auto border border-base-200 rounded-lg bg-base-100">
+  <table class="table table-sm sm:table-md">
+    <thead>
       <tr>
-        <td>
-          {% if person.last_name %}
-            <a href="{% url 'people:person_detail' person.id %}">{{ person.last_name }}</a>
-          {% endif %}
-        </td>
-        <td>
-          {% if person.first_name %}
-            <a href="{% url 'people:person_detail' person.id %}">{{ person.first_name }}</a>
-          {% endif %}
-        </td>
-        <td>
-          <a href="{% url 'people:person_detail' person.id %}">
-            {% if person.display_name %}
-              {{ person.display_name }}
-            {% else %}
-              {{ person.last_name }}
-            {% endif %}
-          </a>
-        </td>
-        <td>
-          {% for role in derived_roles|dict_get:person.id %}
-            <span class="badge">{{ role.name }}</span>
-          {% empty %}
-            -
-          {% endfor %}
-        </td>
+        <th>Last</th>
+        <th>First</th>
+        <th>Display</th>
+        <th>Roles</th>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {% for person in people %}
+        <tr>
+          <td>
+            {% if person.last_name %}
+              <a
+                class="tooltip tooltip-top font-medium text-cyan-700 hover:text-cyan-900 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
+                href="{% url 'people:person_detail' person.id %}"
+                aria-label="View details for {{ person }}"
+                data-tip="View details"
+              >
+                {{ person.last_name }}
+              </a>
+            {% endif %}
+          </td>
+          <td>
+            {% if person.first_name %}
+              <a
+                class="tooltip tooltip-top font-medium text-cyan-700 hover:text-cyan-900 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
+                href="{% url 'people:person_detail' person.id %}"
+                aria-label="View details for {{ person }}"
+                data-tip="View details"
+              >
+                {{ person.first_name }}
+              </a>
+            {% endif %}
+          </td>
+          <td>
+            <a
+              class="tooltip tooltip-top font-medium text-cyan-700 hover:text-cyan-900 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
+              href="{% url 'people:person_detail' person.id %}"
+              aria-label="View details for {{ person }}"
+              data-tip="View details"
+            >
+              {% if person.display_name %}
+                {{ person.display_name }}
+              {% else %}
+                {{ person.last_name }}
+              {% endif %}
+            </a>
+          </td>
+          <td>
+            {% for role in derived_roles|dict_get:person.id %}
+              <span class="badge badge-ghost mr-1 mb-1">{{ role.name }}</span>
+            {% empty %}
+              <span class="opacity-60">-</span>
+            {% endfor %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
-<nav hx-target="#person-table" hx-push-url="true" hx-get="{% url 'people:person_list' %}">
-  <span>
-    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-  </span>
-
-  <div>
+<div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+  <p class="text-sm opacity-70">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+  <div class="join">
     {% if page_obj.has_previous %}
-      <a href="?page=1&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
+      <a class="btn btn-xs join-item" href="?page=1&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
         First
       </a>
-      <a href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
+      <a class="btn btn-xs join-item" href="?page={{ page_obj.previous_page_number }}&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
         Previous
       </a>
     {% endif %}
 
     {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
+      <a class="btn btn-xs join-item" href="?page={{ page_obj.next_page_number }}&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
         Next
       </a>
-      <a href="?page={{ page_obj.paginator.num_pages }}&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
+      <a class="btn btn-xs join-item" href="?page={{ page_obj.paginator.num_pages }}&q={{ request.GET.q }}&active={{ filters.active }}&type={{filters.type}}&needs_review={{ filters.needs_review }}&role={{ filters.role }}">
         Last
       </a>
     {% endif %}
   </div>
-</nav>
+</div>

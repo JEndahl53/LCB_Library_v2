@@ -8,25 +8,108 @@
 {% endblock %}
 
 {% block content %}
+{% load widget_tweaks %}
+<section class="container mx-auto px-6 py-8">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-3xl font-semibold">{% if mode == 'edit' %}Edit{% else %}Add{% endif %} Organization</h1>
+      {% if mode == 'edit' %}
+        <p class="text-sm opacity-70">{{ org.name }}</p>
+      {% endif %}
+    </div>
+    <a class="btn btn-ghost btn-sm" href="{% if mode == 'edit' %}{{ org.get_absolute_url }}{% elif next %}{{ next }}{% else %}{% url 'organizations:organization_list' %}{% endif %}">Cancel</a>
+  </div>
 
-<h1>{% if mode == 'edit' %}Edit{% else %}Add{% endif %} Organization</h1>
+  <div class="card bg-base-100 shadow-sm border border-base-200 mt-6">
+    <div class="card-body">
+      <div class="mb-4 rounded-md border border-base-200 bg-base-100 px-4 py-3 text-sm text-gray-500">
+        Organization roles are derived from relationships to music (publisher, lender, borrower, rental).
+        Add those relationships on a piece of music to assign roles; roles are not set here.
+      </div>
+      <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {% if next %}
+          <input type="hidden" name="next" value="{{ next }}">
+        {% endif %}
 
-<form method="post">
-  {% csrf_token %}
-  {% if next %}
-    <input type="hidden" name="next" value="{{ next }}">
-  {% endif %}
-  {{ form.as_p }}
-  <button type="submit">
-    {% if mode == 'edit' %}Update{% else %}Add{% endif %} Organization
-  </button>
+        <div class="form-control w-full">
+          <label class="label"><span class="label-text">{{ form.name.label }}</span></label>
+          {% render_field form.name class="input input-bordered w-full" %}
+          {{ form.name.errors }}
+        </div>
 
-  {% if mode == 'edit' %}
-    <a href="{{ org.get_absolute_url }}">Cancel</a>
-  {% elif next %}
-    <a href="{{ next }}">Cancel</a>
-  {% else %}
-    <a href="{% url 'organizations:organization_list' %}">Cancel</a>
-  {% endif %}
-</form>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="form-control w-full">
+            <label class="label"><span class="label-text">{{ form.contact_person.label }}</span></label>
+            {% render_field form.contact_person class="input input-bordered w-full" %}
+            {{ form.contact_person.errors }}
+          </div>
+          <div class="form-control w-full">
+            <label class="label"><span class="label-text">{{ form.contact_email.label }}</span></label>
+            {% render_field form.contact_email class="input input-bordered w-full" %}
+            {{ form.contact_email.errors }}
+          </div>
+          <div class="form-control w-full">
+            <label class="label"><span class="label-text">{{ form.contact_phone.label }}</span></label>
+            {% render_field form.contact_phone class="input input-bordered w-full" %}
+            {{ form.contact_phone.errors }}
+          </div>
+        </div>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="form-control w-full">
+            <label class="label"><span class="label-text">{{ form.street_address.label }}</span></label>
+            {% render_field form.street_address class="input input-bordered w-full" %}
+            {{ form.street_address.errors }}
+          </div>
+          <div class="form-control w-full">
+            <label class="label"><span class="label-text">{{ form.city.label }}</span></label>
+            {% render_field form.city class="input input-bordered w-full" %}
+            {{ form.city.errors }}
+          </div>
+          <div class="form-control w-full">
+            <label class="label"><span class="label-text">{{ form.state.label }}</span></label>
+            {% render_field form.state class="input input-bordered w-full" %}
+            {{ form.state.errors }}
+          </div>
+          <div class="form-control w-full">
+            <label class="label"><span class="label-text">{{ form.zip_code.label }}</span></label>
+            {% render_field form.zip_code class="input input-bordered w-full" %}
+            {{ form.zip_code.errors }}
+          </div>
+          <div class="form-control w-full">
+            <label class="label"><span class="label-text">{{ form.country.label }}</span></label>
+            {% render_field form.country class="input input-bordered w-full" %}
+            {{ form.country.errors }}
+          </div>
+          <div class="form-control w-full">
+            <label class="label"><span class="label-text">{{ form.website.label }}</span></label>
+            {% render_field form.website class="input input-bordered w-full" %}
+            {{ form.website.errors }}
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-8">
+          <label class="label cursor-pointer justify-start gap-2">
+            {% render_field form.is_active class="checkbox" %}
+            <span class="label-text">{{ form.is_active.label }}</span>
+          </label>
+          <label class="label cursor-pointer justify-start gap-2">
+            {% render_field form.needs_review class="checkbox" %}
+            <span class="label-text">{{ form.needs_review.label }}</span>
+          </label>
+        </div>
+        {{ form.is_active.errors }}
+        {{ form.needs_review.errors }}
+
+        <div class="flex flex-wrap gap-2">
+          <button type="submit" class="btn btn-primary btn-sm">
+            {% if mode == 'edit' %}Update{% else %}Add{% endif %} Organization
+          </button>
+          <a class="btn btn-ghost btn-sm" href="{% if mode == 'edit' %}{{ org.get_absolute_url }}{% elif next %}{{ next }}{% else %}{% url 'organizations:organization_list' %}{% endif %}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
 {% endblock %}

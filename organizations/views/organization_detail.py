@@ -19,7 +19,6 @@ def organization_detail(request, pk):
     music_links = (
         org.music_links
         .select_related('music', 'role_type')
-        .filter(is_active=True)
         .order_by('music__title')
     )
 

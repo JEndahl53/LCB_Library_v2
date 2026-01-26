@@ -15,11 +15,13 @@ def organization_list(request):
     active = request.GET.get('active', 'active')  # active|inactive|all
     role = request.GET.get('role')
     role_id = int(role) if role and role.isdigit() else None
+    needs_review = request.GET.get("needs_review", "all")
     search = (request.GET.get("q") or "").strip()
 
     qs = get_organization_list_queryset(
         active=active,
         role=role_id,
+        needs_review=needs_review,
         search=search,
     )
 
@@ -36,6 +38,7 @@ def organization_list(request):
             'active': active,
             'q': search,
             'role': role_id,
+            'needs_review': needs_review,
         },
     }
 

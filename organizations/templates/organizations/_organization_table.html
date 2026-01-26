@@ -1,56 +1,72 @@
 <!-- HTMX table for organization_list -->
 
-<table>
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>Contact Person</th>
-    <th>Roles</th>
-    <th>Active</th>
-  </tr>
-  </thead>
-  <tbody>
-    {% for org in organizations %}
+<div class="overflow-x-auto border border-base-200 rounded-lg bg-base-100">
+  <table class="table table-sm sm:table-md">
+    <thead>
       <tr>
-        <td>
-          <a href="{{ org.get_absolute_url }}">{{ org.name }}</a>
-        </td>
-        <td>{{ org.contact_person }}</td>
-        <td>
-          {% for role in org.roles.all %}
-            <span class="badge">{{ role.role_type.name }}</span>
-          {% empty %}
-            -
-          {% endfor %}
-        </td>
-        <td>{{ org.is_active|yesno:"Yes,No" }}</td>
+        <th>Name</th>
+        <th>Contact Person</th>
+        <th>Roles</th>
+        <th>Active</th>
+        <th>Needs Review</th>
       </tr>
-    {% endfor %}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {% for org in organizations %}
+        <tr>
+          <td>
+            <a
+              class="tooltip tooltip-top font-medium text-cyan-700 hover:text-cyan-900 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
+              href="{{ org.get_absolute_url }}"
+              aria-label="View details for {{ org.name }}"
+              data-tip="View details"
+            >
+              {{ org.name }}
+            </a>
+          </td>
+          <td class="text-sm">{{ org.contact_person|default:"--" }}</td>
+          <td>
+            {% for role in org.roles.all %}
+              <span class="badge badge-ghost mr-1 mb-1">{{ role.role_type.name }}</span>
+            {% empty %}
+              <span class="opacity-60">-</span>
+            {% endfor %}
+          </td>
+          <td class="text-sm">{{ org.is_active|yesno:"Yes,No" }}</td>
+          <td class="text-sm">
+            {% if org.needs_review %}
+              <span class="text-success">Yes</span>
+            {% else %}
+              No
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="5" class="text-sm opacity-70">No organizations.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
-<nav>
-  <span>
-    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-  </span>
-
-  <div>
+<div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+  <p class="text-sm opacity-70">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</p>
+  <div class="join">
     {% if page_obj.has_previous %}
-      <a href="?page=1&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}">
+      <a class="btn btn-xs join-item" href="?page=1&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}&needs_review={{ filters.needs_review }}">
         First
       </a>
-      <a href="?page={{ page_obj.previous_page_number }}&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}">
+      <a class="btn btn-xs join-item" href="?page={{ page_obj.previous_page_number }}&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}&needs_review={{ filters.needs_review }}">
         Previous
       </a>
     {% endif %}
 
     {% if page_obj.has_next %}
-      <a href="?page={{ page_obj.next_page_number }}&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}">
+      <a class="btn btn-xs join-item" href="?page={{ page_obj.next_page_number }}&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}&needs_review={{ filters.needs_review }}">
         Next
       </a>
-      <a href="?page={{ page_obj.paginator.num_pages }}&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}">
+      <a class="btn btn-xs join-item" href="?page={{ page_obj.paginator.num_pages }}&active={{ filters.active }}&q={{ filters.q }}&role={{ filters.role|default:'' }}&needs_review={{ filters.needs_review }}">
         Last
       </a>
     {% endif %}
   </div>
-</nav>
+</div>

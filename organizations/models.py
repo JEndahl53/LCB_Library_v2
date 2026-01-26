@@ -28,6 +28,10 @@ class Organization(models.Model):
         db_index=True,
         help_text='Soft-disable organization without deleting history'
     )
+    needs_review = models.BooleanField(
+        default=False,
+        help_text='Flag for librarian review'
+    )
 
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
@@ -87,4 +91,3 @@ class OrganizationRole(models.Model):
 
     def __str__(self):
         return f'{self.organization} - {self.role_type}'
-

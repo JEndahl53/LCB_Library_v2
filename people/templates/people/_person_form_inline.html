@@ -46,9 +46,9 @@
       type="button"
       class="btn btn-primary"
       hx-post="{% url 'people:person_add_hx' %}"
-      hx-target="#role-section-{{ role_type.id }}"
-      hx-swap="outerHTML"
-      hx-include="[name='first_name'], [name='last_name'], [name='display_name'], [name='person_type'], [name='concert_id'], [name='role_type_id], [name='csrfmiddlewaretoken']"
+      hx-target="#concert-people-modal-body"
+      hx-swap="innerHTML"
+      hx-include="[name='first_name'], [name='last_name'], [name='display_name'], [name='person_type'], [name='concert_id'], [name='role_type_id'], [name='csrfmiddlewaretoken']"
       >
         Save Person
     </button>

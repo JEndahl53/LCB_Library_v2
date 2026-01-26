@@ -2,8 +2,10 @@
 
 <div class="space-y-6">
   <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+  <input type="hidden" name="concert_id" id="selected-concert-id" value="{{ concert.pk }}">
+  <input type="hidden" name="role_type_id" id="selected-role-type-id" value="">
   <div>
-    <h2 class="text-lg font-semibold">People &amp; Roles</h2>
+    <h2 class="text-lg font-semibold">People &amp; Roles for this concert</h2>
     <p class="text-sm opacity-70">{{ concert.title }}</p>
   </div>
 
@@ -42,9 +44,9 @@
 
   <section class="space-y-3">
     <div class="flex items-center justify-between gap-3">
-      <h3 class="text-sm font-semibold uppercase opacity-70">Add more</h3>
+      <h3 class="text-sm font-semibold uppercase opacity-70">Add people</h3>
       <button type="button" class="btn btn-outline btn-xs" id="role-add-toggle">
-        Add more...
+        Add role...
       </button>
     </div>
 
@@ -68,6 +70,9 @@
           class="input input-bordered w-full"
           placeholder="Type a name..."
           disabled
+          hx-trigger="keyup delay:300ms"
+          hx-target="#person-search-results"
+          hx-indicator="#person-search-loading"
         >
         <div class="mt-2">
           <div id="person-search-loading" class="htmx-indicator text-xs opacity-60">Searching...</div>
@@ -87,19 +92,31 @@
           id="add-person-button"
           disabled
         >
-          Add person
+          Add to concert
         </button>
         <button
           type="button"
           class="btn btn-ghost btn-sm"
           id="add-person-modal-button"
+          hx-get="{% url 'people:person_add_hx' %}"
+          hx-target="#person-form-target"
+          hx-include="#selected-concert-id, #selected-role-type-id"
+          hx-on::after-request="if (event.detail.successful) document.getElementById('person_modal').showModal()"
           disabled
         >
-          Add new person
+          Create new person
         </button>
       </div>
+      <p class="text-xs opacity-70">
+        "Add to concert" assigns the selected person to the chosen role. "Create new person" opens the people form.
+      </p>
     </div>
   </section>
+
+  <div class="divider">Done</div>
+  <div class="flex justify-end">
+    <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('concert-people-modal').close()">Done</button>
+  </div>
 </div>
 
 <script>
@@ -111,6 +128,7 @@
     const addButton = document.getElementById("add-person-button");
     const addNewButton = document.getElementById("add-person-modal-button");
     const selectedId = document.getElementById("selected-person-id");
+    const selectedRoleInput = document.getElementById("selected-role-type-id");
     const selectedDisplay = document.getElementById("selected-person-display");
     const concertId = "{{ concert.pk }}";
 
@@ -132,9 +150,11 @@
       if (!roleId) {
         searchInput.disabled = true;
         addNewButton.disabled = true;
+        selectedRoleInput.value = "";
         searchInput.removeAttribute("hx-get");
         return;
       }
+      selectedRoleInput.value = roleId;
       searchInput.disabled = false;
       addNewButton.disabled = false;
       searchInput.setAttribute("hx-get", `/concerts/${concertId}/hx/people/${roleId}/search/`);
@@ -143,9 +163,6 @@
       addButton.setAttribute("hx-swap", "innerHTML");
       addButton.setAttribute("hx-include", "[name='csrfmiddlewaretoken']");
       addButton.setAttribute("hx-vals", "js:{person_id: document.getElementById('selected-person-id').value}");
-      addNewButton.setAttribute("hx-get", `/people/hx/add/?concert_id=${concertId}&role_type_id=${roleId}`);
-      addNewButton.setAttribute("hx-target", "#person-form-target");
-      addNewButton.setAttribute("hx-on::after-swap", "person_modal.showModal()");
       if (window.htmx) {
         window.htmx.process(searchInput);
         window.htmx.process(addButton);

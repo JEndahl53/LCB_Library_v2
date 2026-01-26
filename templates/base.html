@@ -39,6 +39,12 @@
           <li><a href="{% url 'music:music_list' %}">Library</a></li>
           <li><a href="{% url 'concerts:concert_list' %}">Concerts</a></li>
           <li><a href="{% url 'people:person_list' %}">Persons</a></li>
+          {% if user.is_staff %}
+            <li class="menu-title mt-2">Admin</li>
+            <li><a href="{% url 'genres:genre_list' %}">Genres</a></li>
+            <li><a href="{% url 'organizations:organization_list' %}">Organizations</a></li>
+            <li><a href="{% url 'venues:venue_list' %}">Venues</a></li>
+          {% endif %}
         </ul>
       </div>
       <a href="{% url 'home' %}" class="flex items-center gap-3">
@@ -47,19 +53,31 @@
           alt="LCB Library Logo"
           class="h-8 w-auto"
           >
-        <span class="text-lg font-semibold sm:inline">
+        <span class="text-lg font-semibold sm:inline text-gray-100">
           LCB Library
         </span>
       </a>
     </div>
 
   <!-- Navbar Center: Desktop Links (DaisyUI construct) -->
-    <div class="navbar-center hidden lg:flex">
+    <div class="navbar-center hidden lg:flex text-gray-50">
       <ul class="menu menu-horizontal px-1">
         <li><a href="{% url 'home' %}">Home</a></li>
         <li><a href="{% url 'music:music_list' %}">Library</a></li>
         <li><a href="{% url 'concerts:concert_list' %}">Concerts</a></li>
         <li><a href="{% url 'people:person_list' %}">Persons</a></li>
+        {% if user.is_staff %}
+          <li>
+            <details>
+              <summary>Admin</summary>
+              <ul class="p-2 bg-base-100 rounded-box shadow text-gray-800">
+                <li><a href="{% url 'genres:genre_list' %}">Genres</a></li>
+                <li><a href="{% url 'organizations:organization_list' %}">Organizations</a></li>
+                <li><a href="{% url 'venues:venue_list' %}">Venues</a></li>
+              </ul>
+            </details>
+          </li>
+        {% endif %}
       </ul>
     </div>
 
@@ -109,5 +127,6 @@
 {% block content %}
 
 {% endblock %}
+{% block extra_body %}{% endblock %}
 </body>
 </html>

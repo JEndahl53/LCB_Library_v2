@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}
+  {% block head_title %}{% endblock %} | LCB Library
+{% endblock %}
+
+{% block content %}
+  <main class="flex-1">
+    <section class="container mx-auto px-6 py-10">
+      {% block manage_content %}{% endblock %}
+    </section>
+  </main>
+{% endblock %}
+
+{% block extra_body %}{% endblock %}

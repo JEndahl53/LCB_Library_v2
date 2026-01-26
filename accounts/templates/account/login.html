@@ -1,0 +1,96 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block entrance_content %}
+  {% url 'account_signup' as signup_url %}
+  <div class="mx-auto max-w-lg">
+    <div class="card bg-base-100 shadow-lg border border-base-200">
+      <div class="card-body gap-6">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] text-cyan-600">Member Access</p>
+          <h1 class="mt-2 text-2xl sm:text-3xl font-semibold text-gray-900">{% trans "Sign In" %}</h1>
+          <p class="mt-1 text-sm text-gray-600">
+            {% trans "Use your band account to manage library records and concert details." %}
+          </p>
+        </div>
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-error">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        {% if not SOCIALACCOUNT_ONLY %}
+          <form method="post" action="{% url 'account_login' %}" class="space-y-4" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+              {% if field.name == "remember" %}
+                <label class="label cursor-pointer justify-start gap-2">
+                  {% render_field field class="checkbox checkbox-primary" %}
+                  <span class="label-text">{{ field.label }}</span>
+                </label>
+              {% else %}
+                <div class="form-control w-full">
+                  <label class="label"><span class="label-text">{{ field.label }}</span></label>
+                  {% render_field field class="input input-bordered w-full" %}
+                  {% if field.errors %}
+                    <div class="mt-1 text-sm text-error">{{ field.errors }}</div>
+                  {% endif %}
+                </div>
+              {% endif %}
+            {% endfor %}
+
+            {{ redirect_field }}
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <button type="submit" class="btn btn-primary w-full sm:w-auto">
+                {% trans "Sign In" %}
+              </button>
+              <a href="{% url 'account_reset_password' %}" class="link link-hover text-sm text-gray-600">
+                {% trans "Forgot your password?" %}
+              </a>
+            </div>
+          </form>
+        {% endif %}
+
+        {% if LOGIN_BY_CODE_ENABLED or PASSKEY_LOGIN_ENABLED %}
+          <div class="divider">{% trans "Other options" %}</div>
+          <div class="grid gap-2">
+            {% if PASSKEY_LOGIN_ENABLED %}
+              <button type="submit" form="mfa_login" id="passkey_login" class="btn btn-outline">
+                {% trans "Sign in with a passkey" %}
+              </button>
+            {% endif %}
+            {% if LOGIN_BY_CODE_ENABLED %}
+              <a href="{{ request_login_code_url }}" class="btn btn-outline">
+                {% trans "Send me a sign-in code" %}
+              </a>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <div class="divider">{% trans "New here?" %}</div>
+        <p class="text-sm text-gray-600">
+          {% trans "Don't have an account yet?" %}
+          <a href="{{ signup_url }}" class="link link-primary">{% trans "Sign up" %}</a>
+        </p>
+
+        {% if SOCIALACCOUNT_ENABLED %}
+          <div class="divider">{% trans "Or continue with" %}</div>
+          {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_body %}
+  {{ block.super }}
+  {% if PASSKEY_LOGIN_ENABLED %}
+    {% include "mfa/webauthn/snippets/login_script.html" with button_id="passkey_login" %}
+  {% endif %}
+{% endblock %}

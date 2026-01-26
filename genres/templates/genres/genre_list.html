@@ -2,35 +2,53 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Genres</h1>
+<section class="container mx-auto px-6 py-8">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-2xl font-semibold">Genres</h1>
+      <p class="text-sm opacity-70">Manage the genre taxonomy for the library.</p>
+    </div>
+    {% if user.is_staff %}
+      <a class="btn btn-primary btn-sm" href="{% url 'genres:genre_add' %}">Add genre</a>
+    {% endif %}
+  </div>
 
-<p>
-  <a href="{% url 'genres:genre_add' %}">Add genre</a>
-</p>
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Active</th>
-      <th>Needs review</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for genre in genres %}
-      <tr>
-        <td>{{ genre.name }}</td>
-        <td>{{ genre.is_active|yesno:"Yes,No" }}</td>
-        <td>{{ genre.needs_review|yesno:"Yes,No" }}</td>
-        <td>
-          <a href="{% url 'genres:genre_edit' genre.id %}">Edit</a>
-          <a href="{% url 'genres:genre_delete' genre.id %}">Delete</a>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="4">No genres.</td></tr>
-    {% endfor %}
-  </tbody>
-</table>
+  <div class="mt-6 overflow-x-auto border border-base-200 rounded-lg bg-base-100">
+    <table class="table table-sm sm:table-md">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Active</th>
+          <th>Needs review</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for genre in genres %}
+          <tr>
+            <td>
+              <a
+                class="tooltip tooltip-top font-medium text-cyan-700 hover:text-cyan-900 hover:underline underline-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
+                href="{% url 'genres:genre_edit' genre.id %}"
+                aria-label="Edit {{ genre.name }}"
+                data-tip="Edit genre"
+              >
+                {{ genre.name }}
+              </a>
+            </td>
+            <td class="text-sm">{{ genre.is_active|yesno:"Yes,No" }}</td>
+            <td class="text-sm">
+              {% if genre.needs_review %}
+                <span class="text-success">Yes</span>
+              {% else %}
+                No
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="3" class="text-sm opacity-70">No genres.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
 {% endblock %}

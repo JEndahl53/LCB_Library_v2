@@ -1,0 +1,58 @@
+<!-- people/templates/people/_person_form_fields.html -->
+{% load widget_tweaks %}
+
+{% if form.non_field_errors %}
+  <div class="alert alert-error">
+    {{ form.non_field_errors }}
+  </div>
+{% endif %}
+
+<div class="form-control w-full">
+  <label class="label"><span class="label-text">{{ form.first_name.label }}</span></label>
+  {% render_field form.first_name class="input input-bordered w-full" %}
+  {{ form.first_name.errors }}
+</div>
+
+<div class="form-control w-full">
+  <label class="label"><span class="label-text">{{ form.last_name.label }}</span></label>
+  {% render_field form.last_name class="input input-bordered w-full" %}
+  {{ form.last_name.errors }}
+</div>
+
+<div class="form-control w-full">
+  <label class="label"><span class="label-text">{{ form.display_name.label }}</span></label>
+  {% render_field form.display_name class="input input-bordered w-full" %}
+  {{ form.display_name.errors }}
+</div>
+
+<div class="grid gap-4 sm:grid-cols-2">
+  <div class="form-control w-full">
+    <label class="label"><span class="label-text">{{ form.birth_date.label }}</span></label>
+    {% render_field form.birth_date class="input input-bordered w-full" %}
+    {{ form.birth_date.errors }}
+  </div>
+  <div class="form-control w-full">
+    <label class="label"><span class="label-text">{{ form.death_date.label }}</span></label>
+    {% render_field form.death_date class="input input-bordered w-full" %}
+    {{ form.death_date.errors }}
+  </div>
+</div>
+
+<div class="space-y-2">
+  <label class="label cursor-pointer justify-start gap-2">
+    {% render_field form.is_active class="checkbox" %}
+    <span class="label-text mr-8">{{ form.is_active.label }}</span>
+    {{ form.is_active.errors }}
+  </label>
+  <label class="label cursor-pointer justify-start gap-2">
+    {% render_field form.needs_review class="checkbox" %}
+    <span class="label-text">{{ form.needs_review.label }}</span>
+    {{ form.needs_review.errors }}
+  </label>
+</div>
+
+<div class="form-control w-full">
+  <label class="label"><span class="label-text">{{ form.notes.label }}</span></label>
+  {% render_field form.notes class="textarea textarea-bordered w-full" %}
+  {{ form.notes.errors }}
+</div>

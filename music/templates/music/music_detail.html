@@ -72,31 +72,41 @@
       </div>
 
       <div class="card bg-base-100 shadow-sm border border-base-200 flex-1">
-        <div class="card-body">
-          <h2 class="card-title">Performance History</h2>
-          <div class="mt-2 text-sm opacity-70">
-            Recordings will appear here once linked to specific performances.
-          </div>
-          <div class="mt-4">
-            {% if music.program_appearances.exists %}
-              <ul class="divide-y divide-base-200">
-                {% for appearance in music.program_appearances.all %}
-                  <li class="py-3 flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                      <div class="font-medium">
-                        <a class="link link-hover" href="{% url 'concerts:concert_detail' appearance.concert.pk %}">
-                          {{ appearance.concert.title }}
-                        </a>
-                      </div>
-                      <div class="text-sm opacity-70">
-                        {{ appearance.concert.date|date:"F j, Y, g:i a"|default:"TBD" }}
-                      </div>
+      <div class="card-body">
+        <h2 class="card-title">Performance History</h2>
+        <div class="mt-4">
+          {% if music.program_appearances.exists %}
+            <ul class="divide-y divide-base-200">
+              {% for appearance in music.program_appearances.all %}
+                <li class="py-3 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <div class="font-medium">
+                      <a class="link link-hover" href="{% url 'concerts:concert_detail' appearance.concert.pk %}">
+                        {{ appearance.concert.title }}
+                      </a>
                     </div>
-                    {% if appearance.notes %}
-                      <div class="text-sm opacity-60">
-                        {{ appearance.notes }}
-                      </div>
+                    <div class="text-sm opacity-70">
+                      {{ appearance.concert.date|date:"F j, Y, g:i a"|default:"TBD" }}
+                    </div>
+                  </div>
+                  {% with recording=appearance.recordings.first %}
+                    {% if recording %}
+                      <a
+                        class="tooltip tooltip-left"
+                        href="{{ recording.audio_file.url }}"
+                        data-tip="Listen/download recording"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-cyan-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 9.75v4.5m3-6v7.5m3-9v10.5M4.5 5.25v13.5A1.5 1.5 0 0 0 6 20.25h12a1.5 1.5 0 0 0 1.5-1.5V5.25A1.5 1.5 0 0 0 18 3.75H6a1.5 1.5 0 0 0-1.5 1.5Z" />
+                        </svg>
+                      </a>
                     {% endif %}
+                  {% endwith %}
+                  {% if appearance.notes %}
+                    <div class="text-sm opacity-60">
+                      {{ appearance.notes }}
+                    </div>
+                  {% endif %}
                   </li>
                 {% endfor %}
               </ul>

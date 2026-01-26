@@ -24,7 +24,7 @@ def person_list(request):
     person_type = request.GET.get("type", "both")
     needs_review = request.GET.get("needs_review", "all")
     role = request.GET.get("role")
-    role_id = int(role) if role else None
+    role_id = int(role) if role and role.isdigit() else None
     search = request.GET.get("q")
 
     # --- Build base queryset (already tested) ---
@@ -37,7 +37,7 @@ def person_list(request):
     )
 
     # --- Pagination ---
-    paginator = Paginator(qs, 25)  # 25 rows per page (adjust later)
+    paginator = Paginator(qs, 15)  # 15 rows per page
     page_number = request.GET.get("page", 1)
     page_obj = paginator.get_page(page_number)
 

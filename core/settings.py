@@ -40,13 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    # local
+    'accounts.apps.AccountsConfig',
     # Django allauth things
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    # local
     'people.apps.PeopleConfig',
-    'accounts.apps.AccountsConfig',
     'core',
     'venues',
     'music',

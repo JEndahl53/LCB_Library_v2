@@ -8,6 +8,7 @@ def get_organization_list_queryset(
     *,
     active: str = "active",
     role: int | None = None,
+    needs_review: str = "all",
     search: str | None = None,
 ) -> QuerySet:
     """
@@ -39,6 +40,10 @@ def get_organization_list_queryset(
     # Role filter
     if role is not None:
         qs = qs.filter(roles__role_type_id=role, roles__is_active=True).distinct()
+
+    # Needs review filter
+    if needs_review == "needs_review":
+        qs = qs.filter(needs_review=True)
 
     # Search filter
     if search:

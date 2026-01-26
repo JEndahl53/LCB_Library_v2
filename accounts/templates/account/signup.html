@@ -1,0 +1,71 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block head_title %}{% trans "Sign Up" %}{% endblock %}
+
+{% block entrance_content %}
+  {% url 'account_login' as login_url %}
+  <div class="mx-auto max-w-lg">
+    <div class="card bg-base-100 shadow-lg border border-base-200">
+      <div class="card-body gap-6">
+        <div>
+          <p class="text-xs uppercase tracking-[0.3em] text-emerald-600">Member Registration</p>
+          <h1 class="mt-2 text-2xl sm:text-3xl font-semibold text-gray-900">{% trans "Sign Up" %}</h1>
+          <p class="mt-1 text-sm text-gray-600">
+            {% trans "Create an account to access the LCB Library and performance history." %}
+          </p>
+        </div>
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-error">
+            {{ form.non_field_errors }}
+          </div>
+        {% endif %}
+
+        {% if not SOCIALACCOUNT_ONLY %}
+          <form method="post" action="{% url 'account_signup' %}" class="space-y-4" novalidate>
+            {% csrf_token %}
+
+            {% for field in form %}
+              <div class="form-control w-full">
+                <label class="label"><span class="label-text">{{ field.label }}</span></label>
+                {% render_field field class="input input-bordered w-full" %}
+                {% if field.help_text %}
+                  <div class="mt-1 text-xs text-gray-500">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                  <div class="mt-1 text-sm text-error">{{ field.errors }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+
+            {{ redirect_field }}
+
+            <button type="submit" class="btn btn-primary w-full sm:w-auto">
+              {% trans "Sign Up" %}
+            </button>
+          </form>
+        {% endif %}
+
+        {% if PASSKEY_SIGNUP_ENABLED %}
+          <div class="divider">{% trans "Other options" %}</div>
+          <a href="{{ signup_by_passkey_url }}" class="btn btn-outline w-full sm:w-auto">
+            {% trans "Sign up using a passkey" %}
+          </a>
+        {% endif %}
+
+        <div class="divider">{% trans "Already registered?" %}</div>
+        <p class="text-sm text-gray-600">
+          {% trans "Already have an account?" %}
+          <a href="{{ login_url }}" class="link link-primary">{% trans "Sign in" %}</a>
+        </p>
+
+        {% if SOCIALACCOUNT_ENABLED %}
+          <div class="divider">{% trans "Or continue with" %}</div>
+          {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}

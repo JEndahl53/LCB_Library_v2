@@ -6,44 +6,85 @@
 {% block title %}People{% endblock %}
 
 {% block content %}
+<section class="container mx-auto px-6 py-8">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h1 class="text-3xl font-semibold">
+        {% if person.display_name %}
+          {{ person.display_name }}
+        {% else %}
+          {{ person.last_name }}
+        {% endif %}
+      </h1>
+      <p class="text-sm opacity-70">Person detail</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      {% if request.user.is_staff %}
+        <a class="btn btn-primary btn-sm" href="{% url 'people:person_edit' person.pk %}">Edit</a>
+      {% endif %}
+      <a class="btn btn-ghost btn-sm" href="{% url 'people:person_list' %}">Back to list</a>
+    </div>
+  </div>
 
-<nav class="actions">
-  <a href="{% url 'people:person_edit' person.pk %}">Edit this person</a>
-  <a href="{% url 'people:person_list' %}">Back to Person List</a>
-</nav>
+  <div class="grid gap-6 mt-6 lg:grid-cols-3">
+    <div class="card bg-base-100 shadow-sm border border-base-200 lg:col-span-2">
+      <div class="card-body">
+        <h2 class="card-title">Basic Information</h2>
+        <dl class="mt-3 grid gap-4 sm:grid-cols-2 text-sm">
+          <div>
+            <dt class="text-xs uppercase opacity-60">Type</dt>
+            <dd class="mt-1">{{ person.get_person_type_display|default:"--" }}</dd>
+          </div>
+          <div>
+            <dt class="text-xs uppercase opacity-60">Status</dt>
+            <dd class="mt-1">{{ person.is_active|yesno:"Active,Inactive" }}</dd>
+          </div>
+          <div>
+            <dt class="text-xs uppercase opacity-60">Needs Review</dt>
+            <dd class="mt-1">{{ person.needs_review|yesno:"Yes,No" }}</dd>
+          </div>
+          <div>
+            <dt class="text-xs uppercase opacity-60">Birth Date</dt>
+            <dd class="mt-1">{{ person.birth_date|date:"F d, Y"|default:"--" }}</dd>
+          </div>
+          <div>
+            <dt class="text-xs uppercase opacity-60">Death Date</dt>
+            <dd class="mt-1">{{ person.death_date|date:"F d, Y"|default:"--" }}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
 
-<h1>
-  {% if person.display_name %}
-    {{ person.display_name }}
-  {% else %}
-    {{ person.last_name }}
-  {% endif %}
-</h1>
+    <div class="card bg-base-100 shadow-sm border border-base-200">
+      <div class="card-body">
+        <h2 class="card-title">Notes</h2>
+        <div class="mt-3 text-sm">
+          {% if person.notes %}
+            {{ person.notes|linebreaks }}
+          {% else %}
+            <span class="opacity-60">No notes added.</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
 
-<section>
-  <h2>Basic Information</h2>
-  <dl>
-    <dt>Type</dt><dd>{{ person.get_person_type_display }}</dd>
-    <dt>Status</dt><dd>{{ person.is_active|yesno:"Active,Inactive" }}</dd>
-    <dt>Needs Review</dt><dd>{{ person.needs_review|yesno:"Yes,No" }}</dd>
-    <dt>Birth Date</dt><dd>{{ person.birth_date|date:"F d, Y" }}</dd>
-    <dt>Death Date</dt><dd>{{ person.death_date|date:"F d, Y" }}</dd>
-  </dl>
+    <div class="card bg-base-100 shadow-sm border border-base-200 lg:col-span-3">
+      <div class="card-body">
+        <h2 class="card-title">Music Roles</h2>
+        <div class="mt-3">
+          {% include "people/_music_roles.html" %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-base-100 shadow-sm border border-base-200 lg:col-span-3">
+      <div class="card-body">
+        <h2 class="card-title">Concert Roles</h2>
+        <div class="mt-3">
+          {% include "people/_concert_roles.html" %}
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
-
-<section>
-  <h2>Music Roles</h2>
-  {% include "people/_music_roles.html" %}
-</section>
-
-<section>
-  <h2>Concert Roles</h2>
-  {% include "people/_concert_roles.html" %}
-</section>
-
-<section>
-  <h2>Notes</h2>
-  <p>{{ person.notes|linebreaks }}</p>
-</section>
-
 {% endblock %}

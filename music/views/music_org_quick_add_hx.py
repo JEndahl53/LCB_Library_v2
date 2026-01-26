@@ -16,6 +16,7 @@ def music_org_quick_add_hx(request, pk):
     if request.method == "POST" and form.is_valid():
         organization = form.save(commit=False)
         organization.is_active = True
+        organization.needs_review = True
         organization.save()
         created_org = organization
         form = OrganizationQuickAddForm()

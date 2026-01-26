@@ -4,6 +4,21 @@
 {% if created_person %}
   <input type="hidden" id="id_person" name="person" value="{{ created_person.pk }}" hx-swap-oob="true">
   <strong id="person-display" hx-swap-oob="true">{{ created_person }}</strong>
+  <input
+    type="text"
+    id="person-search"
+    name="q"
+    placeholder="Search by name..."
+    class="input input-bordered w-full"
+    hx-get="{% url 'people:person_hx_search' %}"
+    hx-trigger="keyup delay:300ms"
+    hx-target="#person-search-results"
+    hx-indicator="#person-search-loading"
+    value="{{ created_person }}"
+    hx-swap-oob="true"
+  />
+  <div id="person-search-results" hx-swap-oob="true"></div>
+  <div id="person-search-loading" class="htmx-indicator text-xs opacity-60" hx-swap-oob="true"></div>
 {% endif %}
 
 <div class="space-y-6">
@@ -89,15 +104,21 @@
       </div>
 
       <div class="mt-4 flex flex-wrap gap-2">
-        <button type="submit" class="btn btn-primary btn-sm">Add</button>
+        <button type="submit" class="btn btn-primary btn-sm">Add role</button>
         {% if is_modal %}
-          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('music-roles-modal').close()">Cancel</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="document.getElementById('music-roles-modal').close()">Done</button>
         {% else %}
           <a class="btn btn-ghost btn-sm" href="{% url 'music:music_edit' music.pk %}">Cancel</a>
         {% endif %}
       </div>
     </form>
   </section>
+
+  {% if created_person %}
+    <div class="alert alert-success text-sm">
+      <span>Person created and selected. Choose a role and click “Add role”.</span>
+    </div>
+  {% endif %}
 
   <div class="divider">Quick add person</div>
   <form
@@ -133,7 +154,29 @@
     </div>
     <p class="text-xs opacity-70 mt-2">This person will be flagged for librarian review.</p>
     <div class="mt-3 flex justify-end">
-      <button type="submit" class="btn btn-outline btn-sm">Add person</button>
+      <button type="submit" class="btn btn-outline btn-sm">Create person</button>
     </div>
   </form>
+
+  <div class="divider">Next steps</div>
+  <div class="flex flex-wrap gap-2">
+    <button
+      type="button"
+      class="btn btn-outline btn-sm"
+      onclick="document.getElementById('music-roles-modal').close(); document.getElementById('music-genres-modal').showModal();"
+      hx-get="{% url 'music:music_genres_assign' music.pk %}"
+      hx-target="#music-genres-modal-body"
+    >
+      Assign genres
+    </button>
+    <button
+      type="button"
+      class="btn btn-outline btn-sm"
+      onclick="document.getElementById('music-roles-modal').close(); document.getElementById('music-orgs-modal').showModal();"
+      hx-get="{% url 'music:music_org_link_add' music.pk %}"
+      hx-target="#music-orgs-modal-body"
+    >
+      Set availability
+    </button>
+  </div>
 </div>
